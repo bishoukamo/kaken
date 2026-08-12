@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ユーザー登録</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+        }
+
+        .register-container {
+            width: 360px;
+            padding: 32px;
+
+            background: white;
+            border-radius: 12px;
+
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .register-container h1 {
+            margin-top: 0;
+            margin-bottom: 24px;
+
+            text-align: center;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+
+            border: 1px solid #ccc;
+            border-radius: 6px;
+
+            font-size: 16px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #555;
+        }
+
+        .register-button {
+            width: 100%;
+            padding: 12px;
+
+            border: none;
+            border-radius: 6px;
+
+            background: #333;
+            color: white;
+
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .register-button:hover {
+            background: #555;
+        }
+
+        #registerResult {
+            margin-top: 20px;
+
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .login-link {
+            margin-top: 20px;
+
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="register-container">
+
+    <h1>ユーザー登録</h1>
+
+    <form id="registerForm">
+
+        <div class="form-group">
+            <label for="username">ユーザー名</label>
+
+            <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="ユーザー名を入力"
+                    required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="email">メールアドレス</label>
+
+            <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="メールアドレスを入力"
+                    required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="password">パスワード</label>
+
+            <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="パスワードを入力"
+                    required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">パスワード（確認）</label>
+
+            <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    placeholder="もう一度パスワードを入力"
+                    required
+            >
+        </div>
+
+        <button
+                type="submit"
+                class="register-button"
+        >
+            登録
+        </button>
+
+    </form>
+
+    <div id="registerResult"></div>
+
+    <div class="login-link">
+        <a href="/login">
+            ログイン画面へ戻る
+        </a>
+    </div>
+
+    <script src="/js/register.js"></script>
+
+</div>
+
+</body>
+</html>
+
