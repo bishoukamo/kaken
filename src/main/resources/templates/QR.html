@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>QRコードリーダー</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        #reader {
+            width: 320px;
+            margin: 20px auto;
+        }
+        #result {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h2 style="text-align:center;">QRコードを読み取る</h2>
+
+<div id="reader"></div>
+<div id="result">読み取り結果：</div>
+
+<script>
+function onScanSuccess(decodedText, decodedResult) {
+    document.getElementById("result").innerHTML =
+        "読み取り結果：<br>" + decodedText;
+
+    // 一度読み取ったら停止
+    html5QrCode.stop();
+}
+
+const html5QrCode = new Html5Qrcode("reader");
+
+Html5Qrcode.getCameras().then(devices => {
+    if (devices && devices.length) {
+        html5QrCode.start(
+            devices[0].id,
+            {
+                fps: 10,
+                qrbox: 250
+            },
+            onScanSuccess
+        );
+    }
+}).catch(err => {
+    console.error(err);
+});
+</script>
+
+</body>
+</html>
+

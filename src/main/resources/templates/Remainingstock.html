@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>薬品残量管理</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body{
+            background:#f4f6f9;
+            font-family:"Yu Gothic",sans-serif;
+        }
+
+        .header{
+            background:#ffe100;
+            color:white;
+            text-align:center;
+            padding:20px;
+            margin-bottom:30px;
+        }
+
+        .low-stock{
+            color:red;
+            font-weight:bold;
+        }
+
+        .normal-stock{
+            color:green;
+            font-weight:bold;
+        }
+
+        .table{
+            background:white;
+        }
+
+        .btn-outline-secondary{
+            min-width: 70px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+
+<body>
+
+<div class="header">
+    <h2>薬品残量管理</h2>
+</div>
+<body>
+
+   <!-- 検索・追加エリア -->
+<div class="row g-3 align-items-center">
+<div class="col-md-7">
+        <div class="input-group">
+            <input type="text"
+                   id="searchInput"
+                   class="form-control"
+                   placeholder="薬品名を検索"
+                   onkeydown="if(event.key === 'Enter') searchMedicine()">
+
+            <button class="btn btn-primary"
+                    onclick="searchMedicine()">
+                検索
+            </button>
+
+            <button class="btn btn-outline-secondary">
+                ▲昇順
+            </button>
+
+            <button class="btn btn-outline-secondary">
+                ▼降順
+            </button>
+        </div>
+    </div>
+<div class="row mt-3">
+
+    <div class="col-md-3">
+    <select class="form-select" id="medicineFilter" >
+        <option value="">薬品名で絞り込み</option>
+        <option value="塩酸">塩酸</option>
+        <option value="エタノール">エタノール</option>
+    </select>
+</div>
+
+<div class="col-md-3">
+    <select class="form-select" id="stockFilter">
+        <option value="">残量で絞り込み</option>
+        <option value="十分">十分</option>
+        <option value="残量少">残量少</option>
+    </select>
+</div>
+
+    <label>登録日</label>
+        <input type="date" id="startDate" class="date-input ms-3" style="width: 170px;">
+～
+<input type="date" id="endDate" style="width: 170px;">
+
+    <div class="col-md-2">
+        <button class="btn btn-success w-100"
+         onclick="filterMedicine()">     絞り込み
+        </button>
+    </div>
+</div>
+<div class="container">
+
+    <div class="card shadow">
+        <div class="card-header bg-warning text-white">
+            残量一覧
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered table-hover text-center align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>薬品ID</th>
+                        <th>薬品名</th>
+                        <th>登録日</th>
+                        <th>現在の残量</th>
+                        <th>単位</th>
+                        <th>状態</th>
+                    </tr>
+                </thead>
+
+                <tbody id="medicineTable">
+
+                    <tr>
+                        <td>001</td>
+                        <td>エタノール</td>
+                        <td>2026-08-01</td>
+                        <td>800</td>
+                        <td>mL</td>
+                        <td class="normal-stock">十分</td>
+                    </tr>
+
+                    <tr class="table-danger">
+                        <td>002</td>
+                        <td>塩酸</td>
+                        <td>2026-08-01</td>
+                        <td>90</td>
+                        <td>mL</td>
+                        <td class="low-stock">残量少</td>
+                    </tr>
+
+                    <tr>
+                        <td>003</td>
+                        <td>水酸化ナトリウム</td>
+                        <td>2026-08-01</td>
+                        <td>350</td>
+                        <td>g</td>
+                        <td class="normal-stock">十分</td>
+                    </tr>
+
+                    <tr class="table-danger">
+                        <td>004</td>
+                        <td>硫酸</td>
+                        <td>2026-08-02</td>
+                        <td>40</td>
+                        <td>mL</td>
+                        <td class="low-stock">残量少</td>
+                    </tr>
+
+                </tbody>
+            
+            </table>
+
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <button class="btn btn-primary" onclick="location.href='homegamen.html'">
+            ホーム画面へ戻る
+        </button>
+    </div>
+
+</div>
+<script>
+
+function filterMedicine(){
+
+    const medicine = document.getElementById("medicineFilter").value;
+    const stock = document.getElementById("stockFilter").value;
+    const start = document.getElementById("startDate").value;
+    const end = document.getElementById("endDate").value;
+    const keyword = document.getElementById("searchInput").value.toLowerCase();
+    
+
+    let rows = document.querySelectorAll("#medicineTable tr");
+
+    rows.forEach(function(row){
+
+        let medicineName = row.cells[1].textContent;
+        let registerDate = row.cells[2].textContent;
+        let stockState = row.cells[5].textContent;
+
+        let show = true;
+
+        // キーワード検索
+        if (keyword !== "" &&
+            !medicineName.toLowerCase().includes(keyword)) {
+            show = false;
+        }
+
+        // 薬品名
+        if (medicine !== "" && medicineName !== medicine) {
+            show = false;
+        }
+
+        // 状態
+        if (stock !== "" && stockState !== stock) {
+            show = false;
+        }
+
+        // 開始日
+        if (start !== "" && registerDate < start) {
+            show = false;
+        }
+
+        // 終了日
+        if (end !== "" && registerDate > end) {
+            show = false;
+        }
+
+        row.style.display = show ? "" : "none";
+
+    });
+}
+    
+
+
+
+</script>
+</body>
+</html>
+

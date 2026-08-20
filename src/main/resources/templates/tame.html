@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>薬品登録</title>
+
+<style>
+body {
+    font-family: "Arial", sans-serif;
+    background: #eaf4ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.box {
+    background: white;
+    padding: 30px;
+    width: 500px;
+    border-radius: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+h1 {
+    text-align: center;
+    color: #2c5aa0;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+input[type="radio"] {
+    width: auto;
+    margin-right: 5px;
+}
+
+input[type="submit"]:hover
+button {
+    width: 100%;
+    padding: 10px;
+    background: #2c8cff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+input[type="submit"]:hover,
+button:hover {
+    background: #176fd1;
+}
+/*プリント用*/
+@media print {
+    /* 背景や画面高さをリセット */
+    body {
+        background: none;
+        height: auto;
+    }
+
+    /* フォーム内の要素（見出し、ラベル、入力欄、ラジオボタン、テキスト、ボタンなど）をすべて非表示 */
+    title,
+    h1, 
+    form label, 
+    form input, 
+    form button, 
+    form br, 
+    #printBtn {
+        display: none !important;
+    }
+
+    /* フォームに直書きされている文字（劇物、毒物、なし 等のテキスト）も一括で非表示にする */
+    form {
+        font-size: 0 !important;
+    }
+
+    /* ボックスの枠線や影を解除 */
+    .box {
+        box-shadow: none;
+        padding: 0;
+        width: auto;
+    }
+
+    /* QRコード表示エリアだけを正しく表示 */
+    #qrcode {
+        margin-top: 0 !important;
+    }
+}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>薬品登録</h1>
+
+<form>
+
+<label>薬品名</label>
+<input type="text" id="name" required>
+
+
+<label>登録日時</label>
+<input type="date" id="day" required>
+
+
+<label>本数</label>
+<input type="number" id="bottle" min="1" required>
+
+<label>内容量</label>
+<input type="number" id="volume" min="0" step="any" required>
+
+<label>劇・毒物</label><br>
+
+<input type="radio" name="danger" value="劇物" required>
+劇物
+
+<input type="radio" name="danger" value="毒物">
+毒物
+
+<input type="radio" name="danger" value="なし">
+なし
+
+
+<button type="button" onclick="createQR()">
+QRコード作成
+</button>
+
+
+<div id="qrcode" style="margin-top:20px;text-align:center;"></div>
+
+<!-- 手動印刷ボタン（初期状態は非表示にしておくと親切です） -->
+<button type="button" id="printBtn" onclick="printQR()" style="display:none; margin-top:15px; background:#28a745;">
+  QRコードを印刷
+</button>
+
+<input type="submit" value="登録">
+
+
+</form>
+
+</div>
+
+
+<script>
+
+function createQR(){
+
+    const name = document.getElementById("name").value;
+    const day = document.getElementById("day").value;
+    const bottle = document.getElementById("bottle").value;
+    const volume = document.getElementById("volume").value;
+
+    const dangerElement =
+        document.querySelector('input[name="danger"]:checked');
+
+
+    if(!dangerElement){
+        alert("劇・毒物を選択してください");
+        return;
+    }
+
+
+    const danger = dangerElement.value;
+
+    /*QRコードができない原因は容量オーバー
+      どうやら日本語がネックらしい　日本語をコメントアウトしてなるべくデータ量を軽くしたけど、下のコードの状態で
+      プログラムを実行して薬品名欄に一文字でも日本語を入力すると容量オーバーでバグる(英字なら15文字くらいでも大丈夫)*/
+    const data =
+        /*"薬品名：" + */name + "\n" +
+        /*登録日：" + */day + "\n" +
+        /*"本数：" + */bottle + "\n" +
+        /*"内容量:" + */volume + "\n" +
+        /*"劇・毒物：" + */danger;
+
+
+    document.getElementById("qrcode").innerHTML = "";
+
+
+    new QRCode(document.getElementById("qrcode"), {
+        text: data,
+        width: 180,
+        height: 180,
+        correctLevel: QRCode.CorrectLevel.L//追加した
+    });
+    // QRコードが生成されたら「印刷ボタン」を表示する
+    document.getElementById("printBtn").style.display = "block";
+}
+
+function printQR() {
+    window.print();
+}
+</script>
+
+
+</body>
+</html>

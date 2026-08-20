@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>薬品一覧</title>
+
+
+   
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: "Yu Gothic", sans-serif;
+        }
+
+        .header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .card {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stock-ok {
+            color: green;
+            font-weight: bold;
+        }
+
+        .stock-low {
+            color: red;
+            font-weight: bold;
+        }
+        .low-stock {
+            background-color: #ffb3b3;  
+            color: red;
+            font-weight: bold;
+        }
+        .info-box {
+            width: 600px;
+            min-height: 250px;
+            margin: 30px auto;
+            padding: 30px;
+    
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+            box-sizing: border-box;
+        }
+
+        .info-box h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .info-box p {
+            color: #555;
+            line-height: 1.8;
+        }
+
+   
+    </style>
+
+</head>
+<body>
+
+
+
+<!-- ヘッダー -->
+<div class="header">
+    <h2>薬品管理システム</h2>
+</div>
+
+
+<div class="container">
+
+<!-- ボタンエリア -->
+<div class="row g-3">
+    <!--左寄せにしたかったけどUI崩れたから直す-->
+    <div class="col-md-3 d-flex flex-column align-items-start gap-2">
+        <button class="btn btn-primary" onclick="location.href='itiran.html'">薬品一覧</button>
+        <button class="btn btn-success" onclick="location.href='tame.html'">薬品登録</button>
+        <button class="btn btn-secondary" onclick="location.href='QR.html'">QRコード読み取り</button>
+        <button class="btn btn-warning" onclick="location.href='Remainingstock.html'">残量管理</button>
+        <button class="btn btn-danger" onclick="location.href='delete.html'">削除画面</button>
+        <button class="btn btn-info" onclick="location.href='deleterireki.html'">削除履歴</button>
+    </div>
+    <!-- 薬品一覧 -->
+    <!--<div class="col-md-3 text-start">
+        <button class="btn btn-primary"
+                onclick="location.href='itiran.html'">
+            薬品一覧
+        </button>
+    </div>-->
+
+    <!-- 薬品登録 -->
+    <!--<div class="col-md-3 text-start">
+        <button class="btn btn-success"
+                onclick="location.href='touroku.html'">
+            薬品登録
+        </button>
+    </div>-->
+
+    <!-- QRコード画面 -->
+    <!--<div class="col-md-3">
+        <button class="btn btn-secondary w-100"
+                onclick="location.href='QR.html'">
+            QRコード読み取り
+        </button>
+    </div>-->
+
+    <!-- 残量 -->
+    <!--<div class="col-md-3">
+        <button class="btn btn-warning w-100"
+                onclick="location.href='Remainingstock.html'">
+            残量管理
+        </button>
+    </div>-->
+   
+    <!-- 削除画面 -->
+    <!--<div class="col-md-3">
+        <button class="btn btn-danger w-100"
+                onclick="location.href='delete.html'">
+            削除画面
+        </button>
+    </div>-->
+
+    <!-- 削除履歴 -->
+    <!-- <div class="col-md-3">
+        <button class="btn btn-danger w-100">
+            onclick="location.href='deleterireki.html'"
+            削除履歴
+        </button>
+    </div>-->
+</div>
+
+<!--インフォメーション-->
+<div class="info-box">
+    <h2>インフォメーション</h2>
+    <p>塩酸の残量が少なくなっています。 2026-08-01</p>
+</div>
+    <br>
+
+</div>    
+
+</body>
+</html>
+
