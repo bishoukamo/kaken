@@ -1,63 +1,121 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <title>アカウント削除</title>
-</head>
 
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: "Yu Gothic", sans-serif;
+        }
+
+        .header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .info-box {
+            width: 500px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+
+        .info-box h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #dc3545;
+            padding-bottom: 10px;
+        }
+
+        .info-row {
+            display: flex;
+            padding: 6px 0;
+        }
+
+        .info-row .label {
+            width: 130px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .info-row .value {
+            color: #555;
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
 <body>
 
-<h1>アカウント削除</h1>
+<!-- ヘッダー -->
+<div class="header">
+    <h2>薬品管理システム</h2>
+</div>
 
-<p>
-    アカウントを削除しますか？
-</p>
+<div class="container">
+    <div class="info-box">
+        <h2>アカウント削除</h2>
 
-<p>
-    この操作は取り消すことができません。
-</p>
+        <div class="alert alert-danger" role="alert">
+            アカウントを削除しますか？<br>
+            この操作は取り消すことができません。
+        </div>
 
-<p>
-    ユーザ名：
-    <span th:text="${user.u_name}"></span>
-</p>
+        <form th:action="@{/account/delete}" method="post">
 
-<p>
-    メールアドレス：
-    <span th:text="${user.mail}"></span>
-</p>
+            <!-- CSRF対策 -->
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
 
-<form th:action="@{/account/delete}" method="post">
+            <div class="mb-3">
+                <label class="form-label">ユーザ名</label>
+                <input type="text" name="u_name" class="form-control" required>
+            </div>
 
-    <!-- CSRF対策 -->
-    <input type="hidden"
-           th:name="${_csrf.parameterName}"
-           th:value="${_csrf.token}">
+            <div class="mb-3">
+                <label class="form-label">メールアドレス</label>
+                <input type="email" name="mail" class="form-control" required>
+            </div>
 
-    <p>
-        パスワード：
-        <input type="password"
-               name="password"
-               required>
-    </p>
+            <div class="mb-3">
+                <label class="form-label">パスワード</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
 
-    <p th:if="${error}"
-       th:text="${error}"
-       style="color:red;">
-    </p>
+            <p th:if="${error}"
+               th:text="${error}"
+               class="text-danger">
+            </p>
 
-    <button type="submit">
-        アカウントを削除する
-    </button>
+            <button type="submit" class="btn btn-danger w-100">アカウントを削除する</button>
 
-</form>
+        </form>
 
-<br>
-
-<a th:href="@{/mypage}">
-    マイページへ戻る
-</a>
+        <div class="mt-3 text-center">
+            <a th:href="@{/mypage}" class="btn btn-outline-secondary btn-sm">マイページへ戻る</a>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
