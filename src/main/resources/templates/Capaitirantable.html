@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>容器・在庫データ一覧</title>
+    </head>
+    <body>
+
+        <h2>容器・在庫データ一覧</h2>
+
+    <table border="1">
+    <tr>
+    <th>
+        <a href="/capa?sort=M_id&order=ASC">薬品ID▲</a>
+        <a href="/capa?sort=M_id&order=DESC">▼</a>
+    </th>
+
+    <th>
+        <a href="/capa?sort=C_id&order=ASC">薬品名▲</a>
+        <a href="/capa?sort=C_id&order=DESC">▼</a>
+    </th>
+
+    <th>
+        <a href="/capa?sort=C_name&order=ASC">備考▲</a>
+        <a href="/capa?sort=C_name&order=DESC">▼</a>
+    </th>
+
+    <th>
+        <a href="/capa?sort=poisonType&order=ASC">劇毒▲</a>
+        <a href="/capa?sort=poisonType&order=DESC">▼</a>
+    </th>
+
+    <th>
+        <a href="/capa?sort=PRD&order=ASC">購入時内容量▲</a>
+        <a href="/capa?sort=PRD&order=DESC">▼</a>
+    </th>
+
+    <th>
+        <a href="/capa?sort=capa&order=ASC">購入時総重量▲</a>
+        <a href="/capa?sort=capa&order=DESC">▼</a>
+    </th>
+
+    <th>
+        <a href="/capa?sort=pur_weight&order=ASC">購入登録日▲</a>
+        <a href="/capa?sort=pur_weight&order=DESC">▼</a>
+    </th>
+
+    <th>
+        <a href="/capa?sort=remarks&order=ASC">管理ID▲</a>
+        <a href="/capa?sort=remarks&order=DESC">▼</a>
+    </th>
+</tr>
+
+    <tr th:each="data : ${capaList}">
+        <td th:text="${data.C_id}"></td>
+        <td th:text="${data.C_name}"></td>
+        <td th:text="${data.remarks}"></td>
+        <td th:text="${data.poisonType}"></td>
+        <td th:text="${data.capa}"></td>
+        <td th:text="${data.pur_weight}"></td>
+        <td th:text="${#temporals.format(data.PRD, 'yyyy/MM/dd')}"></td>
+        <td th:text="${data.M_id}"></td>
+    </tr>
+</table>
+    </body>
+
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>使用記録</title>
+    </head>
+    <body>
+
+<h2>使用記録</h2>
+
+<table border="1">
+
+<tr>
+
+    <th>
+        <a href="siyoulog?sort=useday&order=asc"><!--Siyoulogテーブルからusedayを取り出して昇順 -->
+        使用log▲<!--実際に出力される文字でこれを押すと昇順-->
+        </a>
+        <a href="siyoulog?sort=useday&order=desc"><!--Siyoulogテーブルからusedayを取り出して降順 -->
+        使用log▼<!--実際に出力される文字でこれを押すと降順-->
+        </a>
+    </th>
+
+    <th>
+        <a href="siyoulog?sort=log_id&order=asc">
+        使用日時▲
+        </a>
+        <a href="siyoulog?sort=log_id&order=desc">
+        使用日時▼
+        </a>
+    </th>
+
+    <th>
+        <a href="siyoulog?sort=C_name&order=asc">
+        薬品名▲
+        </a>
+        <a href="siyoulog?sort=C_name&order=desc">
+        薬品名▼
+        </a>
+    </th>
+
+    <th>
+        <a href="siyoulog?sort=M_id&order=asc">
+        管理番号▲
+        </a>
+        <a href="siyoulog?sort=M_id&order=desc">
+        管理番号▼
+        </a>
+    </th>
+
+    <th>
+        <a href="siyoulog?sort=bf_weight&order=asc">
+        使用前総重量▲
+        </a>
+        <a href="siyoulog?sort=bf_weight&order=desc">
+        使用前総重量▼
+        </a>
+    </th>
+
+    <th>
+        <a href="siyoulog?sort=af_weight&order=asc">
+        使用後総重量▲
+        </a>
+        <a href="siyoulog?sort=af_weight&order=desc">
+        使用後総重量▼
+        </a>
+    </th>
+
+    <th>
+        <a href="siyoulog?sort=useday&order=asc">
+        使用量▲
+        </a>
+        <a href="siyoulog?sort=useday&order=desc">
+        使用量▼
+        </a>
+    </th>
+
+    <th>
+        <a href="siyoulog?sort=PTR_name&order=asc">
+        実習室名▲
+        </a>
+        <a href="siyoulog?sort=PTR_name&order=desc">
+        実習室名▼
+        </a>
+    </th>
+
+    <th>
+        <a href="siyoulog?sort=U_name&order=asc">
+        使用者▲
+        </a>
+        <a href="siyoulog?sort=U_name&order=desc">
+        使用者▼
+        </a>
+    </th>
+    <th>編集</th>
+
+</tr>
+
+<!--こっから下は編集しないで-->
+<tr th:each="data : ${siyoulogList}">
+
+    <td th:text="${data.log_id}"></td>
+
+    <td th:text="${#temporals.format(data.useday, 'yyyy/MM/dd')}"></td>
+
+    <td th:text="${data.C_name}"></td>
+
+    <td th:text="${data.M_id}"></td>
+
+    <td th:text="${data.bf_weight}"></td>
+
+    <td th:text="${data.af_weight}"></td>
+
+    <!-- 使用量 = 使用前 - 使用後 -->
+    <td th:text="${data.bf_weight - data.af_weight}"></td>
+
+    <td th:text="${data.PTR_name}"></td>
+
+    <td th:text="${data.U_name}"></td>
+
+    <td>
+        <a th:href="@{/siyoulog/edit/{id}(id=${data.log_id})}">
+            編集
+        </a>
+    </td>
+
+</tr>
+
+</table>
+    </body>
+
+</html>

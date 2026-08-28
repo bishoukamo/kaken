@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>ユーザー一覧</title>
+    </head>
+    <body>
+
+        <h2>ユーザー一覧</h2>
+
+    <table border="1">
+        <tr>
+            <th>
+                <a href="/user?sort=user_id&order=ASC">ユーザーID▲</a>
+                <a href="/user?sort=user_id&order=DESC">▼</a>
+            </th>
+
+            <th>
+                <a href="/user?sort=u_name&order=ASC">ユーザー名▲</a>
+                <a href="/user?sort=u_name&order=DESC">▼</a>
+            </th>
+
+            <th>
+                <a href="/user?sort=yakuwari&order=ASC">役割▲</a>
+                <a href="/user?sort=yakuwari&order=DESC">▼</a>
+            </th>
+
+            <th>
+                <a href="/user?sort=gakuban&order=ASC">学籍番号▲</a>
+                <a href="/user?sort=gakuban&order=DESC">▼</a>
+            </th>
+
+            <th>
+                <a href="/user?sort=setting&order=ASC">登録日▲</a>
+                <a href="/user?sort=setting&order=DESC">▼</a>
+            </th>
+        </tr>
+
+        <tr th:each="data : ${userList}">
+            <td th:text="${data.user_id}"></td>
+            <td th:text="${data.u_name}"></td>
+            <td th:text="${data.yakuwari}"></td>
+            <td th:text="${data.gakuban}"></td>
+            <td th:text="${#temporals.format(data.setting, 'yyyy/MM/dd')}"></td>
+        </tr>
+    </table>
+    </body>
+
+</html>

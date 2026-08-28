@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>実習室一覧</title>
+    </head>
+    <body>
+
+        <h2>実習室一覧</h2>
+
+    <table border="1">
+        <tr>
+            <th>
+                <a href="/ptr_itiran?sort=PTR_id&order=ASC">実習室ID▲</a>
+                <a href="/ptr_itiran?sort=PTR_id&order=DESC">▼</a>
+            </th>
+
+            <th>
+                <a href="/ptr_itiran?sort=user_id&order=ASC">管理ユーザーID▲</a>
+                <a href="/ptr_itiran?sort=user_id&order=DESC">▼</a>
+            </th>
+
+            <th>
+                <a href="/ptr_itiran?sort=PTR_name&order=ASC">実習室名▲</a>
+                <a href="/ptr_itiran?sort=PTR_name&order=DESC">▼</a>
+            </th>
+        </tr>
+
+        <tr th:each="data : ${ptritiranList}">
+            <td th:text="${data.PTR_id}"></td>
+            <td th:text="${data.user_id}"></td>
+            <td th:text="${data.PTR_name}"></td>
+        </tr>
+    </table>
+    </body>
+
+</html>

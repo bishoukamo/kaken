@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>薬品一覧</title>
+    </head>
+    <body>
+
+        <h2>薬品一覧</h2>
+
+    <table border="1">
+        <tr>
+            <th><a href="/citiran?sort=C_id&order=ASC">
+                薬品ID▲
+            </a>
+            <a href="/citiran?sort=C_id&order=DESC">
+                薬品ID▼
+            </a>
+            </th>
+            <th><a href="/citiran?sort=C_name&order=ASC">
+                薬品名▲
+            </a>
+            <a href="/citiran?sort=C_name&order=DESC">
+                薬品名▼
+            </a>
+            </th>
+            <th><a <a href="/citiran?sort=poisonType&order=ASC">
+                劇物▲
+            </a>
+            <a href="/citiran?sort=poisonType&order=DESC">
+                劇物▼
+            </a>
+            </th>
+            <th>
+                <a href="/citiran?sort=situation&order=ASC">
+                状態▲
+                </a>
+                <a href="/citiran?sort=situation&order=DESC">
+                状態▼
+                </a>
+            </th>
+            <th>
+                <a href="/citiran?sort=C_set&order=ASC">
+                登録日▲
+                </a>
+                <a href="/citiran?sort=C_set&order=DESC">
+                登録日▼
+                </a>
+            </th>
+            <th>備考</th>
+        </tr>
+
+        <tr th:each="data : ${itiranList}">
+            <td th:text="${data.C_id}"></td>
+            <td th:text="${data.C_name}"></td>
+            <td th:text="${data.poisonType}"></td>
+            <td th:text="${data.situation}"></td>
+            <td th:text="${data.C_set != null ? #temporals.format(data.C_set, 'yyyy/MM/dd') : ''}"></td>
+            <td th:text="${data.remarks}"></td>
+        </tr>
+    </table>
+    </body>
+
+</html>

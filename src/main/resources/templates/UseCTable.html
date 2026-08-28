@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>使用薬品一覧</title>
+</head>
+
+<body>
+
+<h2>使用薬品一覧</h2>
+
+<table border="1">
+
+<tr>
+            <th>
+                <a href="/usecitiran?sort=m_id&order=ASC">管理ID▲</a>
+                <a href="/usecitiran?sort=m_id&order=DESC">▼</a>
+            </th>
+
+            <th>
+                <a href="/usecitiran?sort=C_name&order=ASC">薬品名▲</a>
+                <a href="/usecitiran?sort=C_name&order=DESC">▼</a>
+            </th>
+
+            <th>
+                <a href="/usecitiran?sort=poisonType&order=ASC">劇毒区分▲</a>
+                <a href="/usecitiran?sort=poisonType&order=DESC">▼</a>
+            </th>
+
+            <th>
+                <a href="/usecitiran?sort=situation&order=ASC">状態▲</a>
+                <a href="/usecitiran?sort=situation&order=DESC">▼</a>
+            </th>
+
+            <th>
+                <a href="/usecitiran?sort=af_weight&order=ASC">使用後重量▲</a>
+                <a href="/usecitiran?sort=af_weight&order=DESC">▼</a>
+            </th>
+            <th>
+                <a href="/usecitiran?sort=PTR_name&order=ASC">実習室名▲</a>
+                <a href="/usecitiran?sort=PTR_name&order=DESC">▼</a>
+            </th>
+        </tr>
+
+
+<tr th:each="data : ${useList}">
+
+    <td th:text="${data.M_id}"></td>
+
+    <td th:text="${data.C_name}"></td>
+
+    <td th:text="${data.poisonType}"></td>
+
+    <td th:text="${data.situation}"></td>
+
+    <td th:text="${data.af_weight}"></td>
+
+    <td th:text="${data.PTR_name}"></td>
+
+</tr>
+
+</table>
+
+</body>
+</html>

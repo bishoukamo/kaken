@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>自分の使用記録</title>
+</head>
+
+<body>
+
+<h2>自分の使用記録</h2>
+
+<!-- 使用記録がない場合 -->
+<p th:if="${message}" th:text="${message}"></p>
+
+<table border="1" th:if="${not #lists.isEmpty(siyoulogList)}">
+
+<tr>
+    <th>使用日時</th>
+    <th>薬品名</th>
+    <th>管理番号</th>
+    <th>使用前総重量</th>
+    <th>使用後総重量</th>
+    <th>使用量</th>
+    <th>実習室名</th>
+    <th>編集</th>
+</tr>
+
+<tr th:each="data : ${siyoulogList}">
+
+    <td th:text="${#temporals.format(data.useday, 'yyyy-MM-dd')}"></td>
+
+    <td th:text="${data.C_name}"></td>
+
+    <td th:text="${data.M_id}"></td>
+
+    <td th:text="${data.bf_weight}"></td>
+
+    <td th:text="${data.af_weight}"></td>
+
+    <!-- 使用量 = 使用前 - 使用後 -->
+    <td th:text="${data.bf_weight - data.af_weight}"></td>
+
+    <td th:text="${data.PTR_name}"></td>
+
+    <td>
+        <a th:href="@{/siyoulog/edit/{id}(id=${data.log_id})}">
+            編集
+        </a>
+    </td>
+
+</tr>
+
+</table>
+
+<br>
+
+<a href="/">戻る</a>
+
+</body>
+</html>

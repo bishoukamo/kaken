@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>抹消済み薬品一覧</title>
+    </head>
+    <body>
+
+        <h2>抹消済み薬品一覧</h2>
+
+    <table border="1">
+        <tr>
+            <th>
+                <a href="/cdelete?sort=D_id&order=ASC">抹消済み薬品ID▲</a>
+                <a href="/cdelete?sort=D_id&order=DESC">▼</a>
+            </th>
+
+            <th>
+                <a href="/cdelete?sort=M_id&order=ASC">管理ID▲</a>
+                <a href="/cdelete?sort=M_id&order=DESC">▼</a>
+            </th>
+
+            <th>
+                <a href="/cdelete?sort=D_date&order=ASC">削除日▲</a>
+                <a href="/cdelete?sort=D_date&order=DESC">▼</a>
+            </th>
+        </tr>
+
+        <tr th:each="data : ${deleteList}">
+            <td th:text="${data.D_id}"></td>
+            <td th:text="${data.M_id}"></td>
+            <td th:text="${#temporals.format(data.D_date, 'yyyy/MM/dd')}"></td>
+        </tr>
+    </table>
+    </body>
+
+</html>

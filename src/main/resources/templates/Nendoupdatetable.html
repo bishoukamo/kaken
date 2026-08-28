@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>年度更新テーブル</title>
+    </head>
+    <body>
+
+        <h2>年度更新テーブル</h2>
+
+    <table border="1">
+        <tr>
+            <th>
+                <a href="/nendo_update?sort=U_id&order=ASC">年度更新ID▲</a>
+                <a href="/nendo_update?sort=U_id&order=DESC">▼</a>
+            </th>
+
+            <th>
+                <a href="/nendo_update?sort=M_id&order=ASC">管理ID▲</a>
+                <a href="/nendo_update?sort=M_id&order=DESC">▼</a>
+            </th>
+
+            <th>
+                <a href="/nendo_update?sort=U_date&order=ASC">年度更新登録日▲</a>
+                <a href="/nendo_update?sort=U_date&order=DESC">▼</a>
+            </th>
+
+            <th>
+                <a href="/nendo_update?sort=U_weight&order=ASC">年度更新時内容量▲</a>
+                <a href="/nendo_update?sort=U_weight&order=DESC">▼</a>
+            </th>
+
+            <th>
+                <a href="/nendo_update?sort=kousinType&order=ASC">年度更新有無▲</a>
+                <a href="/nendo_update?sort=kousinType&order=DESC">▼</a>
+            </th>
+        </tr>
+
+        <tr th:each="data : ${nendo_updateList}">
+            <td th:text="${data.U_id}"></td>
+            <td th:text="${data.M_id}"></td>
+            <td th:text="${#temporals.format(data.U_date, 'yyyy/MM/dd')}"></td>
+            <td th:text="${data.U_weight}"></td>
+            <td th:text="${data.kousinType}"></td>
+        </tr>
+    </table>
+    </body>
+
+</html>
