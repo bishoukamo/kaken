@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>薬品登録</title>
+
+<meta name="_csrf" th:content="${_csrf.token}">
+<meta name="_csrf_header" th:content="${_csrf.headerName}">
+
+<style>
+
+/* =========================
+   全体
+   ========================= */
+
+body {
+    font-family: "Arial", sans-serif;
+    background: #eaf4ff;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    min-height: 100vh;
+
+    margin: 0;
+}
+
+
+/* =========================
+   入力フォーム
+   ========================= */
+
+.box {
+    background: white;
+
+    padding: 30px;
+
+    width: 500px;
+
+    border-radius: 25px;
+
+    box-shadow: 0 5px 15px rgba(0,0,0,.2);
+
+    box-sizing: border-box;
+}
+
+
+h1 {
+    text-align: center;
+    color: #2c5aa0;
+}
+
+
+/* 入力欄 */
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+
+    width: 100%;
+
+    padding: 10px;
+
+    margin-bottom: 15px;
+
+    box-sizing: border-box;
+}
+
+
+input[type="radio"] {
+    width: auto;
+    margin-right: 5px;
+}
+
+
+textarea {
+    resize: vertical;
+}
+
+
+/* =========================
+   ボタン
+   ========================= */
+
+button,
+input[type="submit"] {
+
+    width: 100%;
+
+    padding: 10px;
+
+    margin-top: 5px;
+
+    background: #2c8cff;
+
+    color: white;
+
+    border: none;
+
+    cursor: pointer;
+
+    border-radius: 5px;
+}
+
+
+button:hover,
+input[type="submit"]:hover {
+
+    background: #176fd1;
+}
+
+
+/* =========================
+   QRラベル
+   ========================= */
+
+.box2 {
+
+    background: white;
+
+    width: 70mm;
+
+    min-height: 50mm;
+
+    margin-top: 20px;
+
+    padding: 1mm;
+
+    box-sizing: border-box;
+
+    border-radius: 5px;
+
+    box-shadow: 0 5px 15px rgba(0,0,0,.2);
+
+    display: none;
+}
+
+
+/* QRラベル全体 */
+
+.qr-label {
+
+    width: 68mm;
+
+    margin: 0 auto;
+
+    text-align: center;
+
+    font-family: Arial, "Hiragino Kaku Gothic ProN",
+                 "Yu Gothic", Meiryo, sans-serif;
+
+    box-sizing: border-box;
+}
+
+
+/* M_id */
+
+.m-id {
+
+    font-size: 14pt;
+
+    font-weight: bold;
+
+    margin-bottom: 2mm;
+
+    word-break: break-all;
+}
+
+
+/* 薬品名 */
+
+.c-name {
+
+    font-size: 12pt;
+
+    font-weight: bold;
+
+    margin-bottom: 3mm;
+
+    word-break: break-word;
+}
+
+
+/* QRコード */
+
+#qrcode {
+
+    width: 68mm;
+
+    height: 40.3mm;
+
+    margin: 0 auto;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+}
+
+
+/*
+ * qrcodejsが生成する
+ * canvas / img のサイズを
+ * 実寸40mmにする
+ */
+
+#qrcode canvas,
+#qrcode img {
+
+    width: 40mm !important;
+
+    height: 40mm !important;
+
+    display: block;
+
+}
+
+
+/* =========================
+   印刷設定
+   ========================= */
+
+@media print {
+
+    /* ==========================================
+       A4印刷設定
+       ========================================== */
+
+    @page {
+        size: A4 portrait;
+        margin: 0;
+    }
+
+
+    /* ==========================================
+       入力画面は印刷しない
+       ========================================== */
+
+    .no-print {
+        display: none !important;
+    }
+
+
+    /* ==========================================
+       ページ
+       ========================================== */
+
+    body {
+        display: block;
+
+        background: white;
+
+        margin: 0;
+
+        padding: 0;
+    }
+
+
+    /* ==========================================
+       70mm × 42.3mm ラベル
+       ========================================== */
+
+    .box2 {
+
+        display: block !important;
+
+        width: 70mm;
+
+        height: 42.3mm;
+
+        min-height: 42.3mm;
+
+        padding: 1.5mm;
+
+        margin: 0;
+
+        box-sizing: border-box;
+
+        background: white;
+
+        box-shadow: none;
+
+        border-radius: 0;
+    }
+
+
+    /* ==========================================
+       ラベル内部
+       ========================================== */
+
+    .qr-label {
+
+        width: 67mm;
+
+        height: 39.3mm;
+
+        margin: 0 auto;
+
+        display: flex;
+
+        flex-direction: row;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        text-align: left;
+
+        font-family:
+            Arial,
+            "Hiragino Kaku Gothic ProN",
+            "Yu Gothic",
+            Meiryo,
+            sans-serif;
+
+        box-sizing: border-box;
+    }
+
+
+    /* ==========================================
+       文字部分
+       ========================================== */
+
+    .m-id {
+
+        width: 25mm;
+
+        font-size: 10pt;
+
+        font-weight: bold;
+
+        margin: 0 0 2mm 0;
+
+        word-break: break-all;
+    }
+
+
+    .c-name {
+
+        width: 25mm;
+
+        font-size: 10pt;
+
+        font-weight: bold;
+
+        margin: 0;
+
+        word-break: break-word;
+    }
+
+
+    /* ==========================================
+       QRコード
+       ========================================== */
+
+    #qrcode {
+
+        width: 37mm;
+
+        height: 37mm;
+
+        margin: 0;
+
+        display: flex;
+
+        justify-content: center;
+
+        align-items: center;
+
+        flex-shrink: 0;
+    }
+
+
+    #qrcode canvas,
+    #qrcode img {
+
+        width: 37mm !important;
+
+        height: 37mm !important;
+
+        display: block;
+    }
+
+}
+
+</style>
+
+
+<!-- QRコード生成ライブラリ -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+</head>
+
+
+<body>
+
+
+<!-- ==================================================
+     入力フォーム
+     ================================================== -->
+
+<div class="no-print">
+
+    <div class="box">
+
+        <h1>薬品登録</h1>
+
+
+        <form th:action="@{/admin/chemical/new}" method="post">
+
+
+            <!-- CSRF -->
+
+            <input
+                type="hidden"
+                th:name="${_csrf.parameterName}"
+                th:value="${_csrf.token}"
+            >
+
+
+            <!-- 薬品名 -->
+
+            <label>薬品名</label>
+
+            <input
+                type="text"
+                id="chemicalName"
+                name="C_name"
+                required
+            >
+
+
+            <!-- 容器ID -->
+
+            <label>容器ID</label>
+
+            <input
+                type="number"
+                id="materialId"
+                name="M_Id"
+                min="1"
+                required
+            >
+
+
+            <!-- 購入日 -->
+
+            <label>購入日</label>
+
+            <input
+                type="date"
+                name="PRD"
+                required
+            >
+
+
+            <!-- 使用期限 -->
+
+            <label>使用期限</label>
+
+            <input
+                type="date"
+                name="expiryDate"
+                required
+            >
+
+
+            <!-- 容量 -->
+
+            <label>容量</label>
+
+            <input
+                type="number"
+                name="capa"
+                min="0"
+                step="0.01"
+                required
+            >
+
+
+            <!-- 購入時重量 -->
+
+            <label>購入時重量（g）</label>
+
+            <input
+                type="number"
+                name="pur_weight"
+                min="0"
+                step="0.01"
+                required
+            >
+
+
+            <!-- QRトークン -->
+            <!-- 画面には表示しない -->
+
+            <input
+                type="hidden"
+                id="qrToken"
+                name="qrToken"
+            >
+
+
+            <!-- 毒劇物区分 -->
+
+            <label>毒劇物区分</label>
+
+            <select name="poisonType">
+
+                <option value="">該当なし</option>
+
+                <option value="劇">
+                    劇物
+                </option>
+
+                <option value="毒">
+                    毒物
+                </option>
+
+            </select>
+
+
+            <br><br>
+
+
+            <!-- 薬品の状態 -->
+
+            <label>薬品の状態</label>
+
+            <select
+                name="situation"
+                required
+            >
+
+                <option value="">
+                    選択してください
+                </option>
+
+                <option value="固体">
+                    固体
+                </option>
+
+                <option value="液体">
+                    液体
+                </option>
+
+                <option value="気体">
+                    気体
+                </option>
+
+            </select>
+
+
+            <br><br>
+
+
+            <!-- 備考 -->
+
+            <label>備考</label>
+
+            <textarea
+                name="remarks"
+                maxlength="100"
+                rows="3"
+                placeholder="保管場所や取扱上の注意など"
+            ></textarea>
+
+
+            <br><br>
+
+
+            <!-- QRコード生成 -->
+
+            <button
+                type="button"
+                id="qrcodeprint"
+                onclick="createQR()"
+            >
+                QRコード生成
+            </button>
+
+
+            <!-- QRコード印刷 -->
+
+            <button
+                type="button"
+                id="printBtn"
+                onclick="printQR()"
+                style="display:none; margin-top:15px;"
+            >
+                QRコード印刷
+            </button>
+
+
+            <!-- 薬品登録 -->
+
+            <button
+                type="submit"
+                id="registerBtn"
+                disabled
+                style="margin-top:15px;"
+            >
+                薬品登録
+            </button>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     QRラベル
+     ================================================== -->
+
+<div class="box2">
+
+
+    <div class="qr-label">
+
+
+        <!-- M_id -->
+
+        <div
+            class="m-id"
+            id="labelMaterialId"
+        >
+        </div>
+
+
+        <!-- 薬品名 -->
+
+        <div
+            class="c-name"
+            id="labelChemicalName"
+        >
+        </div>
+
+
+        <!-- QRコード -->
+
+        <div id="qrcode"></div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ==================================================
+   QRコード関連
+   ================================================== */
+
+let qrToken = null;
+
+let qrValue = null;
+
+
+/* ==================================================
+   QRコード生成
+   ================================================== */
+
+async function createQR() {
+
+    console.log("★★★ createQR() 実行 ★★★");
+
+
+    /* -----------------------------------------------
+       入力値取得
+       ----------------------------------------------- */
+
+    const materialId =
+        document.getElementById("materialId").value;
+
+    const chemicalName =
+        document.getElementById("chemicalName").value;
+
+
+    console.log("materialId =", materialId);
+
+    console.log("chemicalName =", chemicalName);
+
+
+    /* -----------------------------------------------
+       容器IDチェック
+       ----------------------------------------------- */
+
+    if (!materialId) {
+
+        alert("容器IDを入力してください。");
+
+        return;
+    }
+
+
+    /* -----------------------------------------------
+       薬品名チェック
+       ----------------------------------------------- */
+
+    if (!chemicalName) {
+
+        alert("薬品名を入力してください。");
+
+        return;
+    }
+
+
+    try {
+
+
+        /* -------------------------------------------
+           CSRF取得
+           ------------------------------------------- */
+
+        const csrfToken =
+            document.querySelector(
+                'meta[name="_csrf"]'
+            ).content;
+
+
+        const csrfHeader =
+            document.querySelector(
+                'meta[name="_csrf_header"]'
+            ).content;
+
+
+        console.log("CSRF取得成功");
+
+
+        /* -------------------------------------------
+           QRトークン発行
+           ------------------------------------------- */
+
+        const response = await fetch(
+
+            "/admin/qr-labels?materialId="
+            + encodeURIComponent(materialId),
+
+            {
+                method: "POST",
+
+                headers: {
+                    [csrfHeader]: csrfToken
+                }
+            }
+
+        );
+
+
+        console.log("QR発行レスポンス");
+
+        console.log("status =", response.status);
+
+
+        /* -------------------------------------------
+           JSON取得
+           ------------------------------------------- */
+
+        const data = await response.json();
+
+
+        console.log("response data =", data);
+
+
+        /* -------------------------------------------
+           エラーチェック
+           ------------------------------------------- */
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "QRコードの発行に失敗しました"
+            );
+        }
+
+
+        /* -------------------------------------------
+           QR情報保存
+           ------------------------------------------- */
+
+        qrToken = data.qrToken;
+
+        qrValue = data.qrValue;
+
+
+        console.log("qrToken =", qrToken);
+
+        console.log("qrValue =", qrValue);
+
+
+        /* -------------------------------------------
+           hiddenにQRトークン保存
+           ------------------------------------------- */
+
+        document.getElementById("qrToken").value =
+            qrToken;
+
+
+        /* -------------------------------------------
+           ラベル上部に容器番号表示
+           ------------------------------------------- */
+
+        document.getElementById("labelMaterialId")
+            .textContent =
+            "容器番号: " + materialId;
+
+
+        /* -------------------------------------------
+           ラベル上部に薬品名表示
+           ------------------------------------------- */
+
+        document.getElementById("labelChemicalName")
+            .textContent =
+            chemicalName;
+
+
+        /* -------------------------------------------
+           以前のQRを削除
+           ------------------------------------------- */
+
+        document.getElementById("qrcode").innerHTML = "";
+
+
+        /* -------------------------------------------
+           QRコード生成
+           ------------------------------------------- */
+
+        new QRCode(
+
+            document.getElementById("qrcode"),
+
+            {
+                text: qrValue,
+
+                /*
+                 * QRCode生成時の内部サイズ
+                 * CSSで印刷時40mmにする
+                 */
+
+                width: 160,
+
+                height: 160,
+
+                correctLevel:
+                    QRCode.CorrectLevel.L
+            }
+
+        );
+
+
+        /* -------------------------------------------
+           QRラベル表示
+           ------------------------------------------- */
+
+        document.querySelector(".box2")
+            .style.display = "block";
+
+
+        /* -------------------------------------------
+           印刷ボタン表示
+           ------------------------------------------- */
+
+        document.getElementById("printBtn")
+            .style.display = "block";
+
+
+        /* -------------------------------------------
+           登録ボタン有効化
+           ------------------------------------------- */
+
+        document.getElementById("registerBtn")
+            .disabled = false;
+
+
+        console.log("QRコード生成完了");
+
+
+    } catch (error) {
+
+
+        console.error(
+            "QRコード生成エラー:",
+            error
+        );
+
+
+        alert(error.message);
+
+    }
+
+}
+
+
+/* ==================================================
+   QRコード印刷
+   ================================================== */
+
+function printQR() {
+
+    window.print();
+
+}
+
+</script>
+
+
+</body>
+
+</html>

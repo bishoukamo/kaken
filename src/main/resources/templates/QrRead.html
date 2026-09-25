@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QRコード読み取り</title>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: "Yu Gothic", sans-serif;
+            margin: 0;
+        }
+
+        .header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .info-box {
+            width: 600px;
+            max-width: 90%;
+            margin: 30px auto;
+            padding: 30px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.1);
+            box-sizing: border-box;
+        }
+
+        .info-box h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: #333;
+            border-bottom: 2px solid #0d6efd;
+            padding-bottom: 10px;
+        }
+
+        #reader {
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result p {
+            margin: 8px 0;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+
+        .error {
+            margin-top: 15px;
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-success {
+            background-color: #198754;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h2>薬品管理システム</h2>
+</div>
+
+<div class="container">
+
+    <div class="info-box">
+
+        <h2>QRコード読み取り</h2>
+
+        <p>
+            薬品のQRコードをカメラに映してください。
+        </p>
+
+        <!-- カメラ -->
+        <div id="reader"></div>
+
+        <!-- エラー表示 -->
+        <div id="errorMessage" class="error"></div>
+
+        <!-- 読み取った薬品情報 -->
+    <div id="result" class="result">
+
+    <h3>薬品情報</h3>
+
+    <p>
+        <span class="label">瓶番号：</span>
+        <span id="materialId"></span>
+    </p>
+
+    <p>
+        <span class="label">薬品ID：</span>
+        <span id="chemicalId"></span>
+    </p>
+
+    <p>
+        <span class="label">薬品名：</span>
+        <span id="chemicalName"></span>
+    </p>
+
+    <p>
+        <span class="label">現在の容量：</span>
+        <span id="capacity"></span>
+    </p>
+
+    <p>
+        <span class="label">使用期限：</span>
+        <span id="expiryDate"></span>
+    </p>
+
+    <button
+        type="button"
+        class="btn btn-success"
+        onclick="goToUsageRecord()">
+        使用記録を登録する
+    </button>
+
+    </div>
+
+        <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="location.href='/mysiyoulog'">
+            戻る
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    let scannedToken = null;
+    let materialId = null;
+    let chemicalId = null;
+    
+
+    let html5QrCode = new Html5Qrcode("reader");
+
+    const config = {
+        fps: 10,
+        qrbox: {
+            width: 250,
+            height: 250
+        }
+    };
+
+
+    function onScanSuccess(decodedText, decodedResult) {
+
+        console.log("QR読み取り成功:", decodedText);
+
+        // 二重読み取り防止
+        html5QrCode.stop().catch(error => {
+            console.log("カメラ停止エラー:", error);
+        });
+
+        scannedToken = decodedText;
+
+        getChemicalInfo(decodedText);
+    }
+
+
+    function onScanFailure(error) {
+        // 読み取り失敗は頻繁に発生するので、
+        // ここでは何もしない
+    }
+
+
+    // カメラ開始
+    html5QrCode.start(
+        { facingMode: "environment" },
+        config,
+        onScanSuccess,
+        onScanFailure
+    ).catch(error => {
+
+        console.error(error);
+
+        document.getElementById("errorMessage").textContent =
+            "カメラを起動できませんでした。カメラの使用を許可してください。";
+    });
+
+
+    // QRトークンから薬品情報を取得
+    async function getChemicalInfo(qrValue) {
+
+        try {
+
+            document.getElementById("errorMessage").textContent = "";
+
+            // CMS1: が付いている場合にも対応
+            let token = qrValue;
+
+            if (token.startsWith("CMS1:")) {
+                token = token.substring("CMS1:".length);
+            }
+
+            const response = await fetch(
+                "/api/qr/" + encodeURIComponent(token)
+            );
+
+            if (!response.ok) {
+                throw new Error("薬品情報を取得できませんでした");
+            }
+
+            const data = await response.json();
+            materialId = data.materialId;
+            chemicalId = data.chemicalId;
+
+            console.log("取得した薬品情報:", data);
+
+            // 画面に表示
+            document.getElementById("materialId").textContent =
+                data.materialId ?? "";
+
+            document.getElementById("chemicalId").textContent =
+                data.chemicalId ?? "";
+
+            document.getElementById("chemicalName").textContent =
+                data.chemicalName ?? "";
+
+            document.getElementById("capacity").textContent =
+                data.capacity ?? "";
+
+            document.getElementById("expiryDate").textContent =
+                data.expiryDate ?? ""; 
+
+            document.getElementById("result").style.display = "block";
+
+        } catch (error) {
+
+            console.error(error);
+
+            document.getElementById("errorMessage").textContent =
+                "QRコードに対応する薬品情報が見つかりませんでした。";
+
+        }
+    }
+
+
+    // 使用記録登録画面へ
+    function goToUsageRecord() {
+
+    console.log("materialId:", materialId);
+    console.log("chemicalId:", chemicalId);
+
+    if (!materialId || !chemicalId) {
+        alert("薬品情報が取得できていません");
+        return;
+    }
+
+    location.href =
+        "/siyoulog/new?M_id="
+        + encodeURIComponent(materialId)
+        + "&C_id="
+        + encodeURIComponent(chemicalId);
+    }
+</script>
+
+</body>
+</html>
