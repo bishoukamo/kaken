@@ -1,49 +1,145 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <title>ユーザー一覧</title>
-    </head>
-    <body>
+<!DOCTYPE html> <html xmlns:th="http://www.thymeleaf.org"> <head> <meta charset="UTF-8"> <title>ユーザー一覧</title>
+<style>
+    /* ページ全体 */
+    body {
+            background-color: #f4f6f9;
+            font-family: "Yu Gothic", sans-serif;
+        }
 
-        <h2>ユーザー一覧</h2>
+    /* タイトル */
+    h2 {
+        background-color: #0d6efd;
+            color: white;
+            padding: 20px;
+            text-align: center;
+    }
 
-    <table border="1">
+    /* テーブル */
+    table {
+        width: 90%;
+        margin: 0 auto;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    /* ヘッダー */
+    
+    
+    th {
+        background-color: #0d6efd;
+        color: white;
+        padding: 14px 10px;
+        text-align: center;
+        border-right: 1px solid #ffffff;
+    }
+
+    th:last-child {
+        border-right: none;
+    }
+
+    /* ヘッダーのリンク */
+    th a {
+        color: white;
+        text-decoration: none;
+        font-size: 14px;
+        margin: 0 4px;
+    }
+
+    th a:hover {
+        text-decoration: underline;
+        color: #dfe6ff;
+    }
+
+    /* データ */
+    td {
+        padding: 13px 10px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* 1行おきに色を変える */
+    tbody tr:nth-child(even) {
+        background-color: #f8f9ff;
+    }
+
+    /* マウスを乗せたとき */
+    tbody tr:hover {
+        background-color: #e8edff;
+    }
+
+    /* 最後の行の下線を消す */
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+</style>
+
+</head> <body>
+<h2>ユーザー一覧</h2>
+
+<table>
+
+    <thead>
         <tr>
+
             <th>
-                <a href="/user?sort=user_id&order=ASC">ユーザーID▲</a>
+                ユーザーID<br>
+                <a href="/user?sort=user_id&order=ASC">▲</a>
                 <a href="/user?sort=user_id&order=DESC">▼</a>
             </th>
 
             <th>
-                <a href="/user?sort=u_name&order=ASC">ユーザー名▲</a>
+                ユーザー名<br>
+                <a href="/user?sort=u_name&order=ASC">▲</a>
                 <a href="/user?sort=u_name&order=DESC">▼</a>
             </th>
 
             <th>
-                <a href="/user?sort=yakuwari&order=ASC">役割▲</a>
+                役割<br>
+                <a href="/user?sort=yakuwari&order=ASC">▲</a>
                 <a href="/user?sort=yakuwari&order=DESC">▼</a>
             </th>
 
             <th>
-                <a href="/user?sort=gakuban&order=ASC">学籍番号▲</a>
+                学籍番号<br>
+                <a href="/user?sort=gakuban&order=ASC">▲</a>
                 <a href="/user?sort=gakuban&order=DESC">▼</a>
             </th>
 
             <th>
-                <a href="/user?sort=setting&order=ASC">登録日▲</a>
+                登録日<br>
+                <a href="/user?sort=setting&order=ASC">▲</a>
                 <a href="/user?sort=setting&order=DESC">▼</a>
             </th>
+
         </tr>
+    </thead>
+
+    <tbody>
 
         <tr th:each="data : ${userList}">
-            <td th:text="${data.user_id}"></td>
-            <td th:text="${data.u_name}"></td>
-            <td th:text="${data.yakuwari}"></td>
-            <td th:text="${data.gakuban}"></td>
-            <td th:text="${#temporals.format(data.setting, 'yyyy/MM/dd')}"></td>
-        </tr>
-    </table>
-    </body>
 
-</html>
+            <td th:text="${data.user_id}">
+            </td>
+
+            <td th:text="${data.u_name}">
+            </td>
+
+            <td th:text="${data.yakuwari}">
+            </td>
+
+            <td th:text="${data.gakuban}">
+            </td>
+
+            <td th:text="${#temporals.format(data.setting, 'yyyy/MM/dd')}">
+            </td>
+
+        </tr>
+
+    </tbody>
+
+</table>
+
+</body> </html>
