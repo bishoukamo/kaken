@@ -1,125 +1,376 @@
-<!DOCTYPE html> <html xmlns:th="http://www.thymeleaf.org"> <head> <meta charset="UTF-8"> <title>ユーザー一覧</title>
-<style>
-    /* ページ全体 */
-    body {
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ユーザー一覧</title>
+
+    <style>
+
+        /* =========================
+           ページ全体
+        ========================= */
+
+        body {
             background-color: #f4f6f9;
             font-family: "Yu Gothic", sans-serif;
+            margin: 0;
         }
 
-    /* タイトル */
-    h2 {
-        background-color: #0d6efd;
+
+        /* =========================
+           タイトル
+        ========================= */
+
+        h2 {
+            background-color: #0d6efd;
             color: white;
             padding: 20px;
             text-align: center;
-    }
+            margin: 0 0 30px 0;
+        }
 
-    /* テーブル */
-    table {
-        width: 90%;
-        margin: 0 auto;
-        border-collapse: collapse;
-        background-color: #ffffff;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        overflow: hidden;
-    }
 
-    /* ヘッダー */
-    
-    
-    th {
-        background-color: #0d6efd;
-        color: white;
-        padding: 14px 10px;
-        text-align: center;
-        border-right: 1px solid #ffffff;
-    }
+        /* =========================
+           全体コンテナ
+        ========================= */
 
-    th:last-child {
-        border-right: none;
-    }
+        .container {
+            width: 90%;
+            margin: 0 auto;
+        }
 
-    /* ヘッダーのリンク */
-    th a {
-        color: white;
-        text-decoration: none;
-        font-size: 14px;
-        margin: 0 4px;
-    }
 
-    th a:hover {
-        text-decoration: underline;
-        color: #dfe6ff;
-    }
+        /* =========================
+           検索エリア
+        ========================= */
 
-    /* データ */
-    td {
-        padding: 13px 10px;
-        text-align: center;
-        border-bottom: 1px solid #ddd;
-    }
+        .search-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
 
-    /* 1行おきに色を変える */
-    tbody tr:nth-child(even) {
-        background-color: #f8f9ff;
-    }
+        .search-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
 
-    /* マウスを乗せたとき */
-    tbody tr:hover {
-        background-color: #e8edff;
-    }
+        .input-group {
+            display: flex;
+            gap: 5px;
+        }
 
-    /* 最後の行の下線を消す */
-    tbody tr:last-child td {
-        border-bottom: none;
-    }
-</style>
+        #searchInput {
+            height: 48px;
+            font-size: 16px;
+            box-sizing: border-box;
+            flex: 1;
+            padding: 0 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+        }
 
-</head> <body>
-<h2>ユーザー一覧</h2>
 
-<table>
+        /* =========================
+           検索ボタン
+        ========================= */
 
-    <thead>
-        <tr>
+        .search-button {
+            height: 48px;
+            padding: 0 25px;
+            font-weight: bold;
+            border: 1px solid #0d6efd;
+            background-color: #0d6efd;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
 
-            <th>
-                ユーザーID<br>
-                <a href="/user?sort=user_id&order=ASC">▲</a>
-                <a href="/user?sort=user_id&order=DESC">▼</a>
-            </th>
+        .search-button:hover {
+            background-color: #0b5ed7;
+        }
 
-            <th>
-                ユーザー名<br>
-                <a href="/user?sort=u_name&order=ASC">▲</a>
-                <a href="/user?sort=u_name&order=DESC">▼</a>
-            </th>
 
-            <th>
-                役割<br>
-                <a href="/user?sort=yakuwari&order=ASC">▲</a>
-                <a href="/user?sort=yakuwari&order=DESC">▼</a>
-            </th>
+        /* =========================
+           クリアボタン
+        ========================= */
 
-            <th>
-                学籍番号<br>
-                <a href="/user?sort=gakuban&order=ASC">▲</a>
-                <a href="/user?sort=gakuban&order=DESC">▼</a>
-            </th>
+        .clear-button {
+            height: 48px;
+            padding: 0 20px;
+            border: 1px solid #6c757d;
+            background-color: white;
+            color: #6c757d;
+            border-radius: 6px;
+            cursor: pointer;
+        }
 
-            <th>
-                登録日<br>
-                <a href="/user?sort=setting&order=ASC">▲</a>
-                <a href="/user?sort=setting&order=DESC">▼</a>
-            </th>
+        .clear-button:hover {
+            background-color: #6c757d;
+            color: white;
+        }
 
-        </tr>
-    </thead>
 
-    <tbody>
+        /* =========================
+           テーブル
+        ========================= */
 
-        <tr th:each="data : ${userList}">
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+
+        /* =========================
+           テーブルヘッダー
+        ========================= */
+
+        th {
+            background-color: #0d6efd;
+            color: white;
+            padding: 14px 10px;
+            text-align: center;
+            border-right: 1px solid #ffffff;
+        }
+
+        th:last-child {
+            border-right: none;
+        }
+
+
+        /* =========================
+           ヘッダーのリンク
+        ========================= */
+
+        th a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            margin: 0 4px;
+        }
+
+        th a:hover {
+            text-decoration: underline;
+            color: #dfe6ff;
+        }
+
+
+        /* =========================
+           データ
+        ========================= */
+
+        td {
+            padding: 13px 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+
+        /* =========================
+           1行おきに色を変える
+        ========================= */
+
+        tbody tr:nth-child(even) {
+            background-color: #f8f9ff;
+        }
+
+
+        /* =========================
+           マウスを乗せたとき
+        ========================= */
+
+        tbody tr:hover {
+            background-color: #e8edff;
+        }
+
+
+        /* =========================
+           最後の行の下線を消す
+        ========================= */
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+
+        /* =========================
+           サイドメニュー
+        ========================= */
+
+        .side-menu {
+            margin-bottom: 20px;
+        }
+
+
+        /* =========================
+           サイドメニューのボタン
+        ========================= */
+
+        .side-menu .btn {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+
+            padding: 12px;
+            background-color: white;
+            color: #333;
+            border: 1px solid #333;
+            border-radius: 6px;
+
+            text-decoration: none;
+            text-align: center;
+
+            transition:
+                background-color 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease,
+                transform 0.1s ease;
+        }
+
+
+        /* =========================
+           カーソルを合わせたとき
+        ========================= */
+
+        .side-menu .btn:hover {
+            background-color: #333;
+            color: white;
+            border-color: #333;
+        }
+
+
+        /* =========================
+           押したときの縮小
+        ========================= */
+
+        .side-menu .btn:active {
+            transform: scale(0.96);
+        }
+
+
+        /* =========================
+           該当データなし
+        ========================= */
+
+        #empty {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+    <!-- =========================
+         タイトル
+    ========================= -->
+
+    <h2>ユーザー一覧</h2>
+
+
+    <div class="container">
+
+
+        
+
+
+        <!-- =========================
+             検索エリア
+        ========================= -->
+
+        <div class="search-card">
+
+            <div class="search-title">
+                ユーザーを検索
+            </div>
+
+
+            <div class="input-group">
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="ユーザーID・ユーザー名を入力してください"
+                    onkeydown="if(event.key === 'Enter') searchUser()"
+                >
+
+
+                <button
+                    type="button"
+                    class="search-button"
+                    onclick="searchUser()">
+
+                    検索
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="clear-button"
+                    onclick="clearSearch()">
+
+                    クリア
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             ユーザー一覧
+        ========================= -->
+
+        <table id="medicineTable">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        ユーザーID
+                    </th>
+
+                    <th>
+                        ユーザー名
+                    </th>
+
+                    <th>
+                        役割
+                    </th>
+
+                    <th>
+                        学籍番号
+                    </th>
+
+                    <th>
+                        登録日
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                
+
+            <tr th:each="data : ${userList}">
 
             <td th:text="${data.user_id}">
             </td>
@@ -138,8 +389,156 @@
 
         </tr>
 
-    </tbody>
+                
 
-</table>
+            </tbody>
 
-</body> </html>
+        </table>
+
+
+        <!-- =========================
+             該当なし
+        ========================= -->
+
+        <div id="empty">
+            該当するデータがありません。
+        </div>
+
+
+    </div>
+
+
+    <!-- =========================
+         JavaScript
+    ========================= -->
+
+    <script>
+
+        /* =========================
+           検索
+        ========================= */
+
+        function searchUser() {
+
+            const keyword =
+                document
+                    .getElementById("searchInput")
+                    .value
+                    .trim()
+                    .toLowerCase();
+
+
+            const rows =
+                document.querySelectorAll(
+                    "#medicineTable tbody tr"
+                );
+
+
+            let count = 0;
+
+
+            rows.forEach(function(row) {
+
+                /*
+                 * ユーザーID
+                 */
+
+                const id =
+                    row.cells[0]
+                        .textContent
+                        .trim()
+                        .toLowerCase();
+
+
+                /*
+                 * ユーザー名
+                 */
+
+                const name =
+                    row.cells[1]
+                        .textContent
+                        .trim()
+                        .toLowerCase();
+
+
+                /*
+                 * IDまたはユーザー名で検索
+                 */
+
+                const match =
+                    keyword === "" ||
+                    id.includes(keyword) ||
+                    name.includes(keyword);
+
+
+                if (match) {
+
+                    row.style.display = "";
+
+                    count++;
+
+                } else {
+
+                    row.style.display = "none";
+
+                }
+
+            });
+
+
+            /*
+             * 該当なし
+             */
+
+            const empty =
+                document.getElementById("empty");
+
+
+            if (count === 0) {
+
+                empty.style.display = "block";
+
+            } else {
+
+                empty.style.display = "none";
+
+            }
+
+        }
+
+
+        /* =========================
+           検索クリア
+        ========================= */
+
+        function clearSearch() {
+
+            document
+                .getElementById("searchInput")
+                .value = "";
+
+
+            const rows =
+                document.querySelectorAll(
+                    "#medicineTable tbody tr"
+                );
+
+
+            rows.forEach(function(row) {
+
+                row.style.display = "";
+
+            });
+
+
+            document
+                .getElementById("empty")
+                .style.display = "none";
+
+        }
+
+    </script>
+
+</body>
+
+</html>
