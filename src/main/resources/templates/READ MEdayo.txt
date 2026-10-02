@@ -19,6 +19,7 @@
 ・本文を
 <div id="maingamen"></div>
 で囲む
+ヘッダーの部分は囲まないでね
 
 ・body内に
     <app-menu></app-menu>
