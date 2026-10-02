@@ -1,0 +1,29 @@
+・任意の<style>の"前"に
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="menu-style.css">
+    <link rel="stylesheet" href="button-style.css">
+　をコピペ
+
+・任意の<style>の"中"に
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 84px;
+
+            z-index: 1000;
+        }
+をコピペ
+
+・本文を
+<div id="maingamen"></div>
+で囲む
+
+・body内に
+    <app-menu></app-menu>
+    <script src="menu-script.js"></script>
+をコピペ(maingamenの中に入れなくていい)
+
+
+
