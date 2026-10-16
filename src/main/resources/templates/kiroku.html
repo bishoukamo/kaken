@@ -4,37 +4,23 @@
     <meta charset="UTF-8">
     <title>使用記録登録</title>
 
-    <!-- Bootstrap -->
+   <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="menu-style.css">
+    <link rel="stylesheet" href="button-style.css">
 
     <style>
-        body {
-            background-color: #f4f6f9;
-            font-family: "Yu Gothic", sans-serif;
-        }
-
         .header {
-            background-color: #0d6efd;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 84px;
 
-        .container {
-            margin-top: 30px;
+            z-index: 1000;
         }
-
-        .info-box {
-            width: 600px;
-            margin: 30px auto;
-            padding: 30px;
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
-        }
-
+        
         .info-box h2 {
             margin-top: 0;
             margin-bottom: 25px;
@@ -56,6 +42,8 @@
     <h2>薬品管理システム</h2>
 </div>
 
+
+<div id="maingamen">
 <div class="container">
     <div class="info-box">
         <h2>使用記録登録</h2>
@@ -106,6 +94,8 @@
         </div>
     </div>
 </div>
-
+</div>
+    <app-menu></app-menu>
+    <script src="menu-script.js"></script>
 </body>
 </html>
