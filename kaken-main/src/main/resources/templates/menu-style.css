@@ -1,0 +1,92 @@
+.container {
+    margin-top: 30px;
+}
+
+.menu {
+    position: static;
+}
+
+.menu-button {
+    position: fixed;
+    top: 15px;
+    left: 20px;
+
+    font-size: 28px;
+    line-height: 1;
+
+    width: 45px;
+    height: 45px;
+
+    background: transparent;
+    border: none;
+
+    color: white;
+    cursor: pointer;
+
+    z-index: 1100;
+}
+
+/* サイドメニュー */
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 250px;
+    height: 100vh;
+
+    background-color: white;
+    color: #333;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+
+    /* 最初は画面の外 */
+    transform: translateX(-100%);
+
+    /* スライドアニメーション */
+    transition: transform 0.3s ease;
+
+    z-index: 1050;
+
+    overflow: hidden;
+}
+
+.side-menu-header {
+    height: 80px;
+    padding: 5px 20px 0 70px;
+
+    display: flex;
+    align-items: center;
+
+    font-weight: bold;
+    font-size: 1.2rem;
+
+    flex-shrink: 0;
+    background-color: white;
+    color: #333;
+}
+
+.side-menu-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* メニューが開いた状態 */
+.side-menu.open {
+    transform: translateX(0);
+}
+
+#maingamen {
+    padding-top: 100px;
+    transition: margin-left 0.3s ease;
+}
+
+#maingamen.menu-open {
+    margin-left: 250px;
+}

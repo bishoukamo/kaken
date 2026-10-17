@@ -1,0 +1,30 @@
+/* =========================
+   ボタン共通
+========================= */
+
+.side-menu .btn {
+    width: 100%;
+    padding: 10px;
+
+    border-radius: 6px;
+
+    font-weight: bold;
+
+    background-color: white;
+    color: #333;
+
+    border: 2px solid #ddd;
+
+    transition: all 0.2s ease;
+}
+
+
+/* =========================
+   カーソルを合わせたとき
+========================= */
+
+.side-menu .btn:hover {
+    background-color: #333;
+    color: white;
+    border-color: #333;
+}

@@ -1,0 +1,39 @@
+.accordion {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.accordion summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  cursor: pointer;
+  font-weight: bold;
+  list-style: none; /* 標準の▼を消す */
+}
+
+.accordion summary::-webkit-details-marker {
+  display: none; /* Safari用 */
+}
+
+/* 右向きの矢印 */
+.accordion summary::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #333;
+  border-bottom: 2px solid #333;
+  transform: rotate(-45deg);
+  transition: transform 0.25s ease;
+}
+
+/* 開いたら下向きへ回転 */
+.accordion[open] summary::before {
+  transform: rotate(45deg);
+}
+
+.accordion .content {
+  padding: 0 16px 16px;
+}
