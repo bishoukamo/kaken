@@ -20,36 +20,36 @@ class AppMenu extends HTMLElement {
                     <button class="btn btn-warning" onclick="location.href='Remainingstock.html'">
                         マイページ
                     </button>
-                    <button class="btn btn-danger" onclick="location.href='delete.html'">
+                    <button class="btn btn-danger" onclick="location.href='QrRead.html'">
                         QRコード読み取り
                     </button>
                     ----------------------------
                     管理者専用
-                    <button class="btn btn-info" onclick="location.href='deleterireki.html'">
+                    <button class="btn btn-info" onclick="location.href='admintop.html'">
                         管理者ページ
                     </button>
-                    <button class="btn btn-info" onclick="location.href='deleterireki.html'">
+                    <button class="btn btn-info" onclick="location.href='newCtouroku.html'">
                         新規薬品登録
                     </button>
-                    <button class="btn btn-info" onclick="location.href='deleterireki.html'">
+                    <button class="btn btn-info" onclick="location.href='Usertable.html'">
                         利用ユーザー一覧
                     </button>
-                    <button class="btn btn-info" onclick="location.href='deleterireki.html'">
+                    <button class="btn btn-info" onclick="location.href='QrReissue.html'">
                         QRコード再発行
                     </button>
-                    <button class="btn btn-info" onclick="location.href='deleterireki.html'">
+                    <button class="btn btn-info" onclick="location.href='Siyoulogtable.html'">
                         使用記録一覧
                     </button>
-                    <button class="btn btn-info" onclick="location.href='deleterireki.html'">
+                    <button class="btn btn-info" onclick="location.href='itiran.html'">
                         容量・在庫一覧
                     </button>
-                    <button class="btn btn-info" onclick="location.href='deleterireki.html'">
+                    <button class="btn btn-info" onclick="location.href='delete.html'">
                         薬品瓶抹消
                     </button>
-                    <button class="btn btn-info" onclick="location.href='deleterireki.html'">
+                    <button class="btn btn-info" onclick="location.href='TeachRequest.html'">
                         管理ユーザー申請一覧
                     </button>
-                    <button class="btn btn-info" onclick="location.href='deleterireki.html'">
+                    <button class="btn btn-info" onclick="location.href='homegamen.html'">
                         ホームに戻る
                     </button>
                 </div>
