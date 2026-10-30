@@ -48,6 +48,9 @@
             margin-top: 30px;
             margin-bottom: 15px;
         }
+        .info-box h4:first-of-type {
+            margin-top: 0;
+        }
 
         .info-box p {
             color: #555;
@@ -79,15 +82,13 @@
 
 <!-- ヘッダー -->
 <div class="header">
-    <h2>薬品管理システム</h2>
+    <h2>マイページ</h2>
 </div>
 
 <div id="maingamen">
 
 <div class="container">
     <div class="info-box">
-        <h2>マイページ</h2>
-
         <h4>ユーザ情報</h4>
         <div class="section">
             <div class="info-row">
@@ -115,7 +116,7 @@
 
         <h4>使用記録</h4>
         <div class="section">
-            <a th:href="@{/MySiyoulogtable}" class="btn btn-primary btn-sm">自分の使用記録</a>
+            <a th:href="@{/MySiyoulogtable}" class="btn btn-outline-primary btn-sm">自分の使用記録</a>
         </div>
 
         <h4>アカウント設定</h4>
@@ -125,7 +126,7 @@
         </div>
 
         <h4>ヘルプ</h4>
-        <button type="button" onclick="location.href='help.html'" class="btn btn-outline-secondary btn-sm">ヘルプ</button>
+        <button type="button" onclick="location.href='help.html'" class="btn btn-outline-primary btn-sm">ヘルプ</button>
 
 
         <h4>その他</h4>
@@ -137,7 +138,7 @@
                 <button type="submit" class="btn btn-secondary btn-sm">ログアウト</button>
             </form>
 
-            <a th:href="@{/account/delete}" class="btn btn-outline-danger btn-sm">アカウント削除</a>
+            <a th:href="@{/account/delete}" class="btn btn-danger btn-sm">アカウント削除</a>
         </div>
         
 

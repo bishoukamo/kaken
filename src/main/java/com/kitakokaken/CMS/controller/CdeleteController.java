@@ -15,7 +15,7 @@ public class CdeleteController {
     private CdeleteService service;
 
     
-    @GetMapping("/admin/cdelete")
+    @GetMapping("/cdelete")
     public String user(
         @RequestParam(defaultValue="D_id") String sort,
         @RequestParam(defaultValue="ASC") String order,

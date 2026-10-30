@@ -1,9 +1,7 @@
 package com.kitakokaken.CMS.repository;
 
 import java.util.List;
-import java.time.LocalDateTime;
 
-import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -81,30 +79,4 @@ public interface SiyoulogRepository extends JpaRepository<Siyoulog, Long> {
         """)
     List<SiyoulogDto> findSiyoulogByUserId(Long userId);
 
-    // 指定した容器の使用記録を新しい順に取得
-    @Query("""
-        SELECT s
-        FROM Siyoulog s
-        WHERE s.M_id = :mId
-        ORDER BY s.useday DESC, s.log_id DESC
-        """)
-    List<Siyoulog> findByMaterialIdOrderByLatest(
-        @Param("mId") Long mId);
-
-
-    // 編集対象の記録より前にある、同じ容器の使用記録を取得
-    @Query("""
-        SELECT s
-        FROM Siyoulog s
-        WHERE s.M_id = :mId
-        AND (
-          s.useday < :useday
-          OR (s.useday = :useday AND s.log_id < :logId)
-        )
-        ORDER BY s.useday DESC, s.log_id DESC
-    """)
-    List<Siyoulog> findPreviousRecords(
-        @Param("mId") Long mId,
-        @Param("useday") LocalDateTime useday,
-        @Param("logId") Long logId);
 }

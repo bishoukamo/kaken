@@ -27,16 +27,16 @@ public class MypageController {
             Model model,
             Authentication authentication) {
 
-                String mail = authentication.getName();
+        String mail = authentication.getName();
 
-                User user = userRepository.findByMail(mail)
+        User user = userRepository.findByMail(mail)
                 .orElseThrow(() ->
                     new RuntimeException("ユーザーが見つかりません"));
 
-                model.addAttribute("user", user);
+        model.addAttribute("user", user);
 
-                return "Mypage";
-            }
+        return "Mypage";
+    }
 
     @GetMapping("/mypage/password")
     public String showPasswordChange(){
@@ -51,35 +51,35 @@ public class MypageController {
         Authentication authentication,
         Model model) {
 
-            String mail = authentication.getName();
+    String mail = authentication.getName();
 
-            User user = userRepository.findByMail(mail)
-                .orElseThrow(() ->
-                    new RuntimeException("ユーザーが見つかりません"));
+    User user = userRepository.findByMail(mail)
+            .orElseThrow(() ->
+                new RuntimeException("ユーザーが見つかりません"));
 
-            // 現在のパスワード確認
-            if (!passwordEncoder.matches(currentPassword, user.getPass())) {
+    // 現在のパスワード確認
+    if (!passwordEncoder.matches(currentPassword, user.getPass())) {
 
-                model.addAttribute("error",
-                    "現在のパスワードが正しくありません");
+        model.addAttribute("error",
+                "現在のパスワードが正しくありません");
 
-                return "PasswordChange";
-            }
+        return "PasswordChange";
+    }
 
-            // 新しいパスワードの一致確認
-            if (!newPassword.equals(confirmPassword)) {
+    // 新しいパスワードの一致確認
+    if (!newPassword.equals(confirmPassword)) {
 
-                model.addAttribute("error",
-                    "新しいパスワードが一致していません");
+        model.addAttribute("error",
+                "新しいパスワードが一致していません");
 
-                    return "PasswordChange";
-            }
+        return "PasswordChange";
+    }
 
-            // 新しいパスワードを暗号化
-            user.setPass(passwordEncoder.encode(newPassword));
+    // 新しいパスワードを暗号化
+    user.setPass(passwordEncoder.encode(newPassword));
 
-            userRepository.save(user);
+    userRepository.save(user);
 
-            return "redirect:/mypage";
-        }
+    return "redirect:/mypage";
+    }
 }

@@ -30,129 +30,215 @@ public class QrLabelService {
         this.capaitiranRepository = capaitiranRepository;
     }
 
-    //M_idを指定してQRトークンを発行する。すでに未使用のQRが存在する場合は、そのQRを再利用する。
+    /**
+     * M_idを指定してQRトークンを発行する
+     *
+     * すでに未使用のQRが存在する場合は
+     * そのQRを再利用する。
+     */
     @Transactional
     public QrLabel issue(Long materialId) {
 
-    if (materialId == null) {
-        throw new RuntimeException("容器IDを入力してください");
-    }
+        if (materialId == null) {
+            throw new RuntimeException(
+                    "容器IDを入力してください");
+        }
 
-    if (materialId < 1) {
-        throw new RuntimeException("容器IDは1以上の数値を入力してください");
-    }
+        /*
+         * すでにこのM_idに対して
+         * 未使用のQRが存在するか確認
+         */
+        Optional<QrLabel> existing =
+                qrLabelRepository
+                        .findByMaterialIdAndAssignedAtIsNull(
+                                materialId);
 
-    // 同じ容器IDに未使用のQRがあれば再利用する
-    Optional<QrLabel> existing =
-            qrLabelRepository.findByMaterialIdAndAssignedAtIsNull(materialId);
+        if (existing.isPresent()) {
+            return existing.get();
+        }
 
-    if (existing.isPresent()) {
-        return existing.get();
-    }
+        /*
+         * すでに使用済みのQRが存在する場合
+         */
+        if (qrLabelRepository.existsByMaterialId(materialId)) {
+            throw new RuntimeException(
+                    "この容器IDにはすでに薬品登録されています");
+        }
 
-    // 使用済みのQRがある容器IDには新規発行しない
-    if (qrLabelRepository.existsByMaterialId(materialId)) {
+        /*
+         * 新しいQRトークンを発行
+         */
+        for (int i = 0; i < 10; i++) {
+
+            byte[] bytes = new byte[16];
+
+            RANDOM.nextBytes(bytes);
+
+            String token =
+                    Base64.getUrlEncoder()
+                            .withoutPadding()
+                            .encodeToString(bytes);
+
+            /*
+             * トークンの重複確認
+             */
+            if (!qrLabelRepository.existsById(token)) {
+
+                QrLabel qrLabel = new QrLabel();
+
+                qrLabel.setQrToken(token);
+
+                qrLabel.setMaterialId(materialId);
+
+                qrLabel.setCreatedAt(
+                        LocalDateTime.now());
+
+                /*
+                 * assignedAtはここでは設定しない
+                 *
+                 * 薬品登録が成功したときに
+                 * assignToMaterial()で設定する
+                 */
+                qrLabel.setAssignedAt(null);
+
+                return qrLabelRepository.save(qrLabel);
+            }
+        }
+
         throw new RuntimeException(
-                "この容器IDにはすでに薬品登録されています");
+                "QRトークンの発行に失敗しました");
     }
 
-    // QRトークンを生成する
-    for (int i = 0; i < 10; i++) {
 
-        byte[] bytes = new byte[16];
-        RANDOM.nextBytes(bytes);
+    /**
+     * QRトークンとM_idが一致しているか確認
+     */
+    @Transactional(readOnly = true)
+    public void verify(
+            String qrToken,
+            Long materialId) {
 
-        String token = Base64.getUrlEncoder()
-                .withoutPadding()
-                .encodeToString(bytes);
+        if (qrToken == null ||
+                qrToken.isBlank()) {
 
-        if (!qrLabelRepository.existsById(token)) {
+            throw new RuntimeException(
+                    "QRコードを生成してください");
+        }
 
-            QrLabel qrLabel = new QrLabel();
+        if (materialId == null) {
 
-            qrLabel.setQrToken(token);
-            qrLabel.setMaterialId(materialId);
-            qrLabel.setCreatedAt(LocalDateTime.now());
-            qrLabel.setAssignedAt(null);
+            throw new RuntimeException(
+                    "容器IDを入力してください");
+        }
 
-            return qrLabelRepository.save(qrLabel);
+        /*
+         * QRにCMS1:が付いていても対応
+         */
+        if (qrToken.startsWith("CMS1:")) {
+
+            qrToken =
+                    qrToken.substring(
+                            "CMS1:".length());
+        }
+
+        /*
+         * QRトークン検索
+         */
+        QrLabel qrLabel =
+                qrLabelRepository
+                        .findById(qrToken)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "QRトークンが見つかりません"));
+
+        /*
+         * M_id確認
+         */
+        if (!materialId.equals(
+                qrLabel.getMaterialId())) {
+
+            throw new RuntimeException(
+                    "QRコードと容器IDが一致しません");
+        }
+
+        /*
+         * すでに薬品登録済みか確認
+         */
+        if (qrLabel.getAssignedAt() != null) {
+
+            throw new RuntimeException(
+                    "このQRコードはすでに薬品登録に使用されています");
         }
     }
 
-    throw new RuntimeException("QRトークンの発行に失敗しました");
-}
 
-@Transactional
-public void verify(String qrToken, Long materialId) {
-
-    if (qrToken == null || qrToken.isBlank()) {
-        throw new RuntimeException("QRコードを生成してください");
-    }
-
-    if (materialId == null) {
-        throw new RuntimeException("容器IDを入力してください");
-    }
-
-    if (materialId < 1) {
-        throw new RuntimeException("容器IDは1以上の数値を入力してください");
-    }
-
-    // QRコードの接頭辞を除去
-    if (qrToken.startsWith("CMS1:")) {
-        qrToken = qrToken.substring("CMS1:".length());
-    }
-
-    // QRコードの行をロックして取得
-    QrLabel qrLabel = qrLabelRepository
-            .findByQrTokenForUpdate(qrToken)
-            .orElseThrow(() ->
-                    new RuntimeException("QRトークンが見つかりません"));
-
-    // 容器IDの一致を確認
-    if (!materialId.equals(qrLabel.getMaterialId())) {
-        throw new RuntimeException("QRコードと容器IDが一致しません");
-    }
-
-    // 使用済みか確認
-    if (qrLabel.getAssignedAt() != null) {
-        throw new RuntimeException(
-                "このQRコードはすでに薬品登録に使用されています");
-    }
-}
-
-
+    /**
+     * 薬品登録完了時にQRを使用済みにする
+     */
     @Transactional
-    public void assignToMaterial(String qrToken, Long materialId) {
-    if (qrToken == null || qrToken.isBlank()) {
-        throw new RuntimeException("QRコードがありません");
-    }
+    public void assignToMaterial(
+            String qrToken,
+            Long materialId) {
 
-    if (materialId == null) {
-        throw new RuntimeException("容器IDがありません");
-    }
+        if (qrToken == null ||
+                qrToken.isBlank()) {
 
-    // QRコードの接頭辞を除去
-    if (qrToken.startsWith("CMS1:")) {
-        qrToken = qrToken.substring("CMS1:".length());
-    }
+            throw new RuntimeException(
+                    "QRコードがありません");
+        }
 
-    // QRコードの行をロックして取得
-    QrLabel qrLabel = qrLabelRepository.findByQrTokenForUpdate(qrToken)
-            .orElseThrow(() -> new RuntimeException("QRトークンが見つかりません"));
+        if (materialId == null) {
 
-    // 容器IDの一致を確認
-    if (!materialId.equals(qrLabel.getMaterialId())) {
-        throw new RuntimeException("QRコードと容器IDが一致しません");
-    }
+            throw new RuntimeException(
+                    "容器IDがありません");
+        }
 
-    // 使用済みか確認
-    if (qrLabel.getAssignedAt() != null) {
-        throw new RuntimeException("このQRコードはすでに使用されています");
-    }
+        /*
+         * CMS1:を取り除く
+         */
+        if (qrToken.startsWith("CMS1:")) {
 
-    // QRコードを使用済みにする
-    qrLabel.setAssignedAt(LocalDateTime.now());
-    qrLabelRepository.save(qrLabel);
+            qrToken =
+                    qrToken.substring(
+                            "CMS1:".length());
+        }
+
+        /*
+         * QRトークン検索
+         */
+        QrLabel qrLabel =
+                qrLabelRepository
+                        .findById(qrToken)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "QRトークンが見つかりません"));
+
+        /*
+         * M_id確認
+         */
+        if (!materialId.equals(
+                qrLabel.getMaterialId())) {
+
+            throw new RuntimeException(
+                    "QRコードと容器IDが一致しません");
+        }
+
+        /*
+         * すでに使用済みか確認
+         */
+        if (qrLabel.getAssignedAt() != null) {
+
+            throw new RuntimeException(
+                    "このQRコードはすでに使用されています");
+        }
+
+        /*
+         * 薬品登録完了
+         */
+        qrLabel.setAssignedAt(
+                LocalDateTime.now());
+
+        qrLabelRepository.save(qrLabel);
     }
 
     @Transactional
@@ -162,56 +248,62 @@ public void verify(String qrToken, Long materialId) {
         throw new RuntimeException("容器IDを入力してください");
     }
 
-    if (materialId < 1) {
-        throw new RuntimeException("容器IDは1以上の数値を入力してください");
-    }
-
-    // 容器IDが実際に登録されているか確認
+    // ==========================================
+    // M_idが実際に登録されているか確認
+    // ==========================================
     if (!capaitiranRepository.existsById(materialId)) {
         throw new RuntimeException(
-                "指定された容器番号のデータが見つかりません");
+                "指定された容器番号のデータが見つかりません"
+        );
     }
 
-    // 現在使用中のQRコードを取得
-    QrLabel oldQr = qrLabelRepository
-            .findByMaterialIdAndAssignedAtIsNotNull(materialId)
-            .orElseThrow(() -> new RuntimeException(
-                    "この容器IDに登録済みのQRコードがありません"));
+    // ==========================================
+    // 現在使用中のQRを取得
+    // ==========================================
+    QrLabel oldQr =
+            qrLabelRepository
+                .findByMaterialIdAndAssignedAtIsNotNull(materialId)
+                .orElseThrow(() ->
+                    new RuntimeException(
+                        "この容器IDに登録済みのQRコードがありません"
+                    )
+                );
 
-    // 新しいQRトークンを生成して登録
+    // ==========================================
+    // 古いQRを削除
+    // ==========================================
+    qrLabelRepository.delete(oldQr);
+
+    // ==========================================
+    // 新しいQRを発行
+    // ==========================================
     for (int i = 0; i < 10; i++) {
 
         byte[] bytes = new byte[16];
         RANDOM.nextBytes(bytes);
 
-        String token = Base64.getUrlEncoder()
-                .withoutPadding()
-                .encodeToString(bytes);
+        String token =
+                Base64.getUrlEncoder()
+                      .withoutPadding()
+                      .encodeToString(bytes);
 
-        if (qrLabelRepository.existsById(token)) {
-            continue;
+        if (!qrLabelRepository.existsById(token)) {
+
+            QrLabel newQr = new QrLabel();
+
+            newQr.setQrToken(token);
+            newQr.setMaterialId(materialId);
+            newQr.setCreatedAt(LocalDateTime.now());
+
+            // すでに登録済みの薬品なのでassigned済みにする
+            newQr.setAssignedAt(LocalDateTime.now());
+
+            return qrLabelRepository.save(newQr);
         }
-
-        QrLabel newQr = new QrLabel();
-        newQr.setQrToken(token);
-        newQr.setMaterialId(materialId);
-        newQr.setCreatedAt(LocalDateTime.now());
-
-        // 登録済みの薬品なので、新しいQRも使用済み状態にする
-        newQr.setAssignedAt(LocalDateTime.now());
-
-        // 新しいQRを先に保存
-        QrLabel savedQr = qrLabelRepository.saveAndFlush(newQr);
-
-        // 新しいQRの保存に成功したら、古いQRを削除
-        qrLabelRepository.delete(oldQr);
-        qrLabelRepository.flush();
-
-        // 新しいQRを返す
-        return savedQr;
     }
 
     throw new RuntimeException(
-            "QRトークンの再発行に失敗しました");
-}
+            "QRトークンの再発行に失敗しました"
+    );
+    }
 }

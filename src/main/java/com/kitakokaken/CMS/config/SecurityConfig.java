@@ -2,7 +2,6 @@ package com.kitakokaken.CMS.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,13 +30,7 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
             .requestMatchers("/login").permitAll()
-
-            // 新規ユーザ登録画面の表示
-            .requestMatchers(HttpMethod.GET, "/user/new").permitAll()
-
-            // 新規ユーザ登録処理
-            .requestMatchers(HttpMethod.POST, "/user/new").permitAll()
-
+            .requestMatchers("/user/new").permitAll()
             .requestMatchers("/admin/**").hasRole("teach")
             .requestMatchers("/siyoulog").hasRole("teach")
             .requestMatchers("/nendo_update").hasRole("teach")
@@ -46,16 +39,7 @@ public class SecurityConfig {
             .requestMatchers("/ptr_itiran").hasRole("teach")
             .requestMatchers("/capa").hasRole("teach")
             .requestMatchers("/reissue").hasRole("teach")
-
             .anyRequest().authenticated()
-            )
-            .exceptionHandling(ex -> ex
-            .accessDeniedHandler((request, response, exception) -> {
-                System.out.println("★★★ ACCESS DENIED");
-                System.out.println("URI = " + request.getRequestURI());
-                System.out.println("理由 = " + exception.getMessage());
-                response.sendError(403);
-                })
             )
             .formLogin(form -> form
                 .loginPage("/login")

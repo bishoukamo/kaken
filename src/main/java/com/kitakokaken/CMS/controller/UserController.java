@@ -37,7 +37,7 @@ public class UserController {
     @Autowired
     private TeachApprovalService teachApprovalService;
 
-    @GetMapping("/admin/user")
+    @GetMapping("/user")
     public String user(
         @RequestParam(defaultValue="user_id") String sort,
         @RequestParam(defaultValue="ASC") String order,
@@ -115,15 +115,15 @@ public class UserController {
         Authentication authentication,
         Model model) {
 
-        String mail = authentication.getName();
+    String mail = authentication.getName();
 
-        User user = userRepository.findByMail(mail)
+    User user = userRepository.findByMail(mail)
             .orElseThrow(() ->
                 new RuntimeException("ユーザーが見つかりません"));
 
-        model.addAttribute("user", user);
+    model.addAttribute("user", user);
 
-        return "AccountDelete";
+    return "AccountDelete";
     }
 
     @PostMapping("/account/delete")
@@ -132,52 +132,52 @@ public class UserController {
     Authentication authentication,
     Model model) {
 
-        String mail = authentication.getName();
+    String mail = authentication.getName();
 
-        User user = userRepository.findByMail(mail)
+    User user = userRepository.findByMail(mail)
             .orElseThrow(() ->
                 new RuntimeException("ユーザーが見つかりません"));
 
-        // パスワード確認
-        if (!passwordEncoder.matches(password, user.getPass())) {
+    // パスワード確認
+    if (!passwordEncoder.matches(password, user.getPass())) {
 
-            model.addAttribute("user", user);
-            model.addAttribute("error",
+        model.addAttribute("user", user);
+        model.addAttribute("error",
                 "パスワードが正しくありません");
 
-            return "AccountDelete";
-        }
+        return "AccountDelete";
+    }
 
-        // 関連データの存在確認
-        long relatedCount =
+    // 関連データの存在確認
+    long relatedCount =
             userRepository.countRelatedData(user.getUser_id());
 
-        if (relatedCount > 0) {
+    if (relatedCount > 0) {
 
-            model.addAttribute("user", user);
-            model.addAttribute("error",
+        model.addAttribute("user", user);
+        model.addAttribute("error",
                 "このアカウントには使用履歴などの関連データが存在するため削除できません。"
                 + "関連データが残っている場合は、削除できない項目を変更してから再度お試しください。");
 
-            return "AccountDelete";
-        }
+        return "AccountDelete";
+    }
 
-        // 関連データがない場合のみアカウント削除
-        userRepository.delete(user);
+    // 関連データがない場合のみアカウント削除
+    userRepository.delete(user);
 
-        return "redirect:/login";
+    return "redirect:/login";
     }
 
     //管理ユーザ申請画面用
     @GetMapping("/admin/teach")
     public String teachRequestList(Model model) {
 
-        List<User> requestList =
+    List<User> requestList =
             userRepository.findByTeachRequestTrue();
 
-        model.addAttribute("requestList", requestList);
+    model.addAttribute("requestList", requestList);
 
-        return "TeachRequest";
+    return "TeachRequest";
     }
 
     @PostMapping("/admin/teach/approve")
@@ -185,9 +185,9 @@ public class UserController {
         @RequestParam Long userId,
         Authentication authentication) {
 
-        teachApprovalService.approve(userId, authentication.getName());
+    teachApprovalService.approve(userId, authentication.getName());
 
-        return "redirect:/admin/teach";
+    return "redirect:/admin/teach";
     }
     
 }

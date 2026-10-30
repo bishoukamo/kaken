@@ -29,8 +29,6 @@ public class NewuserController {
     @GetMapping("/user/new")
     public String showNewUser(Model model) {
 
-        System.out.println("★★★ GET /user/new Controller reached");
-
         model.addAttribute("user", new User());
 
         return "newuser";
@@ -76,15 +74,15 @@ public class NewuserController {
 
 
         // 権限設定
-        if ("teach".equals(yakuwariSelect)) {
-            // teachを選択した場合でも、承認されるまでは一般ユーザ
-            user.setYakuwari(Yakuwari.seito);
-            user.setTeachRequest(true);
-        } else {
-            // seitoを選択
-            user.setYakuwari(Yakuwari.seito);
-            user.setTeachRequest(false);
-        }
+    if ("teach".equals(yakuwariSelect)) {
+        // teachを選択した場合でも、承認されるまでは一般ユーザ
+        user.setYakuwari(Yakuwari.seito);
+        user.setTeachRequest(true);
+    } else {
+        // seitoを選択
+        user.setYakuwari(Yakuwari.seito);
+        user.setTeachRequest(false);
+    }
 
         // DB登録
         userRepository.save(user);

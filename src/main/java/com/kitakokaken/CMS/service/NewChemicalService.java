@@ -39,11 +39,6 @@ public class NewChemicalService {
             throw new RuntimeException(
                     "容器IDを入力してください");
         }
-        
-        if (form.getM_Id() == null || form.getM_Id() < 1) {
-                throw new IllegalArgumentException(
-            "容器IDは1以上の数値を入力してください");
-        }
 
 
         // =========================

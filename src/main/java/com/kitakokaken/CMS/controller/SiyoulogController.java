@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.kitakokaken.CMS.dto.SiyoulogDto;
 import com.kitakokaken.CMS.entity.C_itiran;
@@ -40,7 +39,7 @@ public class SiyoulogController {
 
 
     // 管理ユーザ用：使用log一覧
-    @GetMapping("/admin/siyoulog")
+    @GetMapping("/siyoulog")
     public String showSiyoulog(
             @RequestParam(defaultValue = "asc") String order,
             Model model) {
@@ -88,25 +87,25 @@ public class SiyoulogController {
             Model model,
             Authentication authentication) {
 
-            // 編集対象の使用記録を取得
-            Siyoulog log = service.findById(id);
+        // 編集対象の使用記録を取得
+        Siyoulog log = service.findById(id);
 
-            // ログイン中のユーザを取得
-            String mail = authentication.getName();
+        // ログイン中のユーザを取得
+        String mail = authentication.getName();
 
-            User user = userRepository.findByMail(mail)
+        User user = userRepository.findByMail(mail)
                 .orElseThrow(() ->
                     new RuntimeException("ユーザーが見つかりません"));
 
-            // 管理ユーザではない場合
-            if (!user.getYakuwari().name().equals("teach")) {
+        // 管理ユーザではない場合
+        if (!user.getYakuwari().name().equals("teach")) {
 
-                // 自分の記録か確認
-                if (!log.getUser_id().equals(user.getUser_id())) {
-                    throw new RuntimeException(
-                        "他のユーザーの使用記録は編集できません");
-                }
+            // 自分の記録か確認
+            if (!log.getUser_id().equals(user.getUser_id())) {
+                throw new RuntimeException(
+                    "他のユーザーの使用記録は編集できません");
             }
+        }
 
         model.addAttribute("siyoulog", log);
 
@@ -120,33 +119,33 @@ public class SiyoulogController {
         @RequestParam(required = false) Long C_id,
         Model model) {
 
-        Siyoulog siyoulog = new Siyoulog();
+    Siyoulog siyoulog = new Siyoulog();
 
-        siyoulog.setM_id(M_id);
-        siyoulog.setC_id(C_id);
+    siyoulog.setM_id(M_id);
+    siyoulog.setC_id(C_id);
 
-        model.addAttribute("siyoulog", siyoulog);
+    model.addAttribute("siyoulog", siyoulog);
 
-        // QRから来た場合
-        if (M_id != null) {
+    // QRから来た場合
+    if (M_id != null) {
 
-            Capa_itiran capa =
+        Capa_itiran capa =
                 capaitiranRepository.findById(M_id)
                 .orElse(null);
 
-            if (capa != null) {
+        if (capa != null) {
 
-                model.addAttribute(
+            model.addAttribute(
                     "capacity",
                     capa.getCapa());
 
-                model.addAttribute(
+            model.addAttribute(
                     "expiryDate",
                     capa.getExpiryDate());
 
-                C_itiran chemical =
+            C_itiran chemical =
                     citiranRepository.findById(
-                        capa.getC_id())
+                            capa.getC_id())
                     .orElse(null);
 
             if (chemical != null) {
@@ -165,104 +164,61 @@ public class SiyoulogController {
     @PostMapping("/siyoulog/new")
     public String createSiyoulog(
         @ModelAttribute Siyoulog siyoulog,
-        Authentication authentication,
-        Model model,
-        RedirectAttributes redirectAttributes) {
+        Authentication authentication) {
 
+    // ログイン中のユーザを取得
     String mail = authentication.getName();
 
     User user = userRepository.findByMail(mail)
             .orElseThrow(() ->
                 new RuntimeException("ユーザーが見つかりません"));
 
-    // user_idはログイン中のユーザーから設定
+    // user_idはログイン中のユーザを設定
     siyoulog.setUser_id(user.getUser_id());
 
-    try {
-        String warning = service.createSiyoulog(siyoulog);
-
-        if (warning != null) {
-            redirectAttributes.addFlashAttribute("warning", warning);
-        }
-
+    // DBへ保存
+        service.createSiyoulog(siyoulog);
+        
+        //保存後にmysiyoulogへ遷移
         return "redirect:/mysiyoulog";
-
-    } catch (IllegalArgumentException e) {
-        model.addAttribute("siyoulog", siyoulog);
-        model.addAttribute("error", e.getMessage());
-
-        addContainerInfo(model, siyoulog.getM_id());
-
-        return "kiroku";
     }
-    }
+
 
     // 使用log変更
     @PostMapping("/siyoulog/edit")
     public String updateSiyoulog(
-        @ModelAttribute Siyoulog siyoulog,
-        Authentication authentication,
-        Model model,
-        RedirectAttributes redirectAttributes) {
+            @ModelAttribute Siyoulog siyoulog,
+            Authentication authentication) {
 
-    String mail = authentication.getName();
+        // ログイン中のユーザを取得
+        String mail = authentication.getName();
 
-    User user = userRepository.findByMail(mail)
-            .orElseThrow(() ->
-                new RuntimeException("ユーザーが見つかりません"));
+        User user = userRepository.findByMail(mail)
+                .orElseThrow(() ->
+                    new RuntimeException("ユーザーが見つかりません"));
 
-    Siyoulog original = service.findById(siyoulog.getLog_id());
+        // 変更前のデータをDBから取得
+        Siyoulog original =
+                service.findById(siyoulog.getLog_id());
 
-    // 管理ユーザー以外は自分の記録だけ編集可能
-    if (!user.getYakuwari().name().equals("teach")) {
-        if (!original.getUser_id().equals(user.getUser_id())) {
-            throw new RuntimeException(
-                "他のユーザーの使用記録は編集できません");
+        // 一般ユーザの場合
+        if (!user.getYakuwari().name().equals("teach")) {
+
+            // 自分の記録か確認
+            if (!original.getUser_id().equals(user.getUser_id())) {
+                throw new RuntimeException(
+                    "他のユーザーの使用記録は編集できません");
+            }
         }
-    }
 
-    // 元のuser_idを維持
-    siyoulog.setUser_id(original.getUser_id());
+        // ★user_idはフォームから変更させない
+        siyoulog.setUser_id(original.getUser_id());
 
-    try {
-        String warning = service.updateSiyoulog(siyoulog);
-
-        if (warning != null) {
-            redirectAttributes.addFlashAttribute("warning", warning);
-        }
+        service.updateSiyoulog(siyoulog);
 
         return "redirect:/mysiyoulog";
 
-    } catch (IllegalArgumentException e) {
-        model.addAttribute("siyoulog", siyoulog);
-        model.addAttribute("error", e.getMessage());
 
-        return "Siyoulogedit";
     }
-    }
-    private void addContainerInfo(Model model, Long M_id) {
-
-    if (M_id == null) {
-        return;
-    }
-
-    Capa_itiran capa = capaitiranRepository.findById(M_id)
-            .orElse(null);
-
-    if (capa == null) {
-        return;
-    }
-
-    model.addAttribute("capacity", capa.getCapa());
-    model.addAttribute("expiryDate", capa.getExpiryDate());
-
-    C_itiran chemical = citiranRepository
-            .findById(capa.getC_id())
-            .orElse(null);
-
-    if (chemical != null) {
-        model.addAttribute("chemicalName", chemical.getC_name());
-    }
-}
 
 }

@@ -1,0 +1,20 @@
+.log-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.log-table th,
+.log-table td {
+    border: 1px solid #dee2e6;
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.log-table thead th {
+    background-color: #f1f3f5;
+}
+
+/* striped-columns の代わり：偶数列に色をつける */
+.log-table tbody td:nth-child(even) {
+    background-color: #f8f9fa;
+}

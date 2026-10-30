@@ -1,6 +1,6 @@
 package com.kitakokaken.CMS.dto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * データベースから必要な項目だけを受け取るためのクラス(DTO)
@@ -16,7 +16,7 @@ public class SiyoulogDto {
     private Long log_id;
 
     // 登録日時
-    private LocalDateTime useday;
+    private LocalDate useday;
     
     // 薬品名
     private String C_name;
@@ -53,7 +53,7 @@ public class SiyoulogDto {
      * 引数の順番はRepositoryの@Queryと完全に一致させること！
      */
     public SiyoulogDto(Long log_id,
-                       LocalDateTime useday,
+                       LocalDate useday,
                        String C_name,
                        Long M_id,
                        double bf_weight,
@@ -87,7 +87,7 @@ public class SiyoulogDto {
     /**
      * usedayを取得する
      */
-    public LocalDateTime getUseday() {
+    public LocalDate getUseday() {
         return useday;
     }
 

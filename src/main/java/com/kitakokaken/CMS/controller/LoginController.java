@@ -11,8 +11,8 @@ public class LoginController {
 
     @GetMapping("/login")
     public String login(HttpServletResponse response) {
-        System.out.println("★★★ LOGIN CONTROLLER reached");
-        System.out.println("★★★ status before view = " + response.getStatus());
-        return "login";
+    System.out.println("★★★ LOGIN CONTROLLER reached");
+    System.out.println("★★★ status before view = " + response.getStatus());
+    return "login";
     }
 }

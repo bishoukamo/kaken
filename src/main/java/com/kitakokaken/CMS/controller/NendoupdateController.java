@@ -15,7 +15,7 @@ public class NendoupdateController {
     @Autowired
     private NendoupdateService service;//これも無視していい
 
-    @GetMapping("/admin/nendo_update")
+    @GetMapping("/nendo_update")
     public String user(
         @RequestParam(defaultValue="U_id") String sort,
         @RequestParam(defaultValue="ASC") String order,

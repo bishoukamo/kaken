@@ -1,8 +1,6 @@
 package com.kitakokaken.CMS.entity;
 
-import java.time.LocalDateTime;
-
-import org.hibernate.grammars.hql.HqlParser.LocalDateTimeContext;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,7 +32,7 @@ public class Siyoulog{
     private Long user_id;
 
     @Column(name = "useday")
-    private LocalDateTime useday;
+    private LocalDate useday;
 
     @Column(name = "bf_weight")
     private double bf_weight;
@@ -78,10 +76,10 @@ public class Siyoulog{
         this.user_id = user_id;
     }
 
-    public LocalDateTime getUseday(){
+    public LocalDate getUseday(){
         return useday;
     }
-    public void setUseday(LocalDateTime useday){
+    public void setUseday(LocalDate useday){
         this.useday = useday;
     }
 

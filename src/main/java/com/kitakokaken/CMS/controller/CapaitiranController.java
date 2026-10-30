@@ -14,17 +14,17 @@ public class CapaitiranController {
     @Autowired
     private CapaitiranService service;
 
-    @GetMapping("/admin/capa")
-    public String capa(
+@GetMapping("/capa")
+public String capa(
         @RequestParam(defaultValue="M_id") String sort,
         @RequestParam(defaultValue="ASC") String order,
         Model model){
 
-            model.addAttribute(
-                "capaList",
-                service.findData(sort, order));
+    model.addAttribute(
+            "capaList",
+            service.findData(sort, order));
 
-            return "Capaitirantable";
-        }
+    return "Capaitirantable";
+}
     
 }

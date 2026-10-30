@@ -20,11 +20,11 @@ public class PTRitiranController {
         @RequestParam(defaultValue="ASC") String order,
         Model model) {
 
-        model.addAttribute(
-            "ptritiranList",
-            service.findData(sort, order));
+    model.addAttribute(
+        "ptritiranList",
+        service.findData(sort, order));
 
-        return "PTRitirantable";
+    return "PTRitirantable";
     }
     
 }

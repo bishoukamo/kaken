@@ -17,7 +17,7 @@ public class UseCitiranController {
     @Autowired
     private UseCitiranRepository repository;
 
-    @GetMapping("/admin/usecitiran")
+    @GetMapping("/usecitiran")
     public String useCitiran(
             @RequestParam(defaultValue = "m_id") String sort,
             @RequestParam(defaultValue = "ASC") String order,

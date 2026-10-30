@@ -16,23 +16,23 @@ public class HomeController {
     private final HomeService homeService;
 
     public HomeController(
-        UserRepository userRepository,
-        HomeService homeService) {
+            UserRepository userRepository,
+            HomeService homeService) {
 
-            this.userRepository = userRepository;
-            this.homeService = homeService;
-        }
+        this.userRepository = userRepository;
+        this.homeService = homeService;
+    }
 
-        @GetMapping("/home")
-        public String home(Authentication authentication, Model model) {
-            //ログイン失敗のエラー文を吐き出す
-            User loginUser = userRepository.findByMail(authentication.getName())
+    @GetMapping("/home")
+    public String home(Authentication authentication, Model model) {
+
+        User loginUser = userRepository.findByMail(authentication.getName())
                 .orElseThrow(() ->
                     new RuntimeException("ログインユーザが見つかりません"));
 
-            model.addAttribute("loginUser", loginUser);
-            model.addAttribute("noticeList", homeService.getNotices());
+        model.addAttribute("loginUser", loginUser);
+        model.addAttribute("noticeList", homeService.getNotices());
 
-            return "homegamen";
-        }
+        return "homegamen";
+    }
 }

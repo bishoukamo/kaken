@@ -23,11 +23,11 @@ public class CitiranController {
 
     Model model){
 
-        model.addAttribute(
+    model.addAttribute(
         "itiranList",
         service.findData(sort, order));
 
-        return "Citirantable";
+    return "Citirantable";
     }
     
 }

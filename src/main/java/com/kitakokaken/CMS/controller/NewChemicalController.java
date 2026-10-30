@@ -31,13 +31,13 @@ public class NewChemicalController {
         @ModelAttribute NewChemicalForm form,
         Model model) {
 
-        try {
-            NewChemicalService.register(form);
-            return "redirect:/admin/chemical/new?success";
+    try {
+        NewChemicalService.register(form);
+        return "redirect:/admin/chemical/new?success";
 
-        } catch (RuntimeException e) {
-            model.addAttribute("error", e.getMessage());
-            return "newCtouroku";
-        }
+    } catch (RuntimeException e) {
+        model.addAttribute("error", e.getMessage());
+        return "newCtouroku";
     }
+}
 }

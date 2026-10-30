@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>管理者用ページ</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+          <link href="buttonstyle.css"
+          rel="stylesheet">
+
+    <style>
+
+        /* =========================
+           全体
+        ========================= */
+
+        body {
+            background-color: #f4f6f9;
+            font-family: "Yu Gothic", sans-serif;
+        }
+
+
+        /* =========================
+           メイン画面
+        ========================= */
+
+        #maingamen {
+            transition: transform 0.3s ease;
+        }
+
+        #maingamen.menu-open {
+            transform: translateX(250px);
+        }
+
+
+        /* =========================
+           ヘッダー
+        ========================= */
+
+        .header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+
+        /* =========================
+           コンテナ
+        ========================= */
+
+        .container {
+            margin-top: 30px;
+        }
+
+
+        /* =========================
+           カード
+        ========================= */
+
+        .card {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+
+        /* =========================
+           在庫表示
+        ========================= */
+
+        .stock-ok {
+            color: green;
+            font-weight: bold;
+        }
+
+        .stock-low {
+            color: red;
+            font-weight: bold;
+        }
+
+        .low-stock {
+            background-color: #ffb3b3;
+            color: red;
+            font-weight: bold;
+        }
+
+
+        /* =========================
+           インフォメーション
+        ========================= */
+
+        .info-box {
+            width: 600px;
+            min-height: 250px;
+
+            margin: 30px auto;
+            padding: 30px;
+
+            background-color: white;
+
+            border: 1px solid #ddd;
+            border-radius: 10px;
+
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+            box-sizing: border-box;
+        }
+
+        .info-box h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .info-box p {
+            color: #555;
+            line-height: 1.8;
+        }
+
+
+        /* =========================
+           メニューボタン
+        ========================= */
+
+        .menu-button {
+            position: fixed;
+
+            top: 20px;
+            left: 20px;
+
+            font-size: 28px;
+
+            background: none;
+            border: none;
+
+            cursor: pointer;
+
+            z-index: 1001;
+        }
+
+
+        /* =========================
+           サイドメニュー
+        ========================= */
+
+        .side-menu {
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 250px;
+            height: 100vh;
+
+            background-color: white;
+
+            padding: 80px 20px 20px;
+
+            display: flex;
+            flex-direction: column;
+
+            gap: 10px;
+
+            /* 縦スクロール */
+            overflow-y: auto;
+            overflow-x: hidden;
+
+            /* 最初は画面外 */
+            transform: translateX(-100%);
+
+            /* スライドアニメーション */
+            transition: transform 0.3s ease;
+
+            z-index: 1000;
+        }
+
+
+        /* メニューが開いた状態 */
+
+        .side-menu.open {
+            transform: translateX(0);
+        }
+
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     メイン画面
+========================================= -->
+
+<div id="maingamen">
+
+
+    <!-- ヘッダー -->
+
+    <div class="header">
+
+        <h2>
+            薬品管理システム-管理者用ページ-
+        </h2>
+
+    </div>
+
+
+    <!-- インフォメーション -->
+
+    <div class="info-box">
+
+        <h2>
+            インフォメーション
+        </h2>
+
+
+        <!-- お知らせがない場合 -->
+
+        <p th:if="${#lists.isEmpty(noticeList)}">
+
+            現在、お知らせはありません。
+
+        </p>
+
+
+        <!-- ログインユーザ -->
+
+        <p th:text="${loginUser.u_name + ' 管理者 さん、ログイン中です。'}">
+
+            ユーザ名
+
+        </p>
+
+
+        <!-- QRラベル -->
+
+        <form th:action="@{/admin/qr-labels}"
+              method="post">
+
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+        </form>
+
+    </div>
+
+
+    <!-- =========================================
+         メニューボタン
+    ========================================= -->
+
+    <button id="menuButton"
+            class="menu-button"
+            onclick="toggleMenu()">
+
+        ≡
+
+    </button>
+
+
+</div>
+
+
+
+<!-- =========================================
+     サイドメニュー
+========================================= -->
+
+<div id="sideMenu"
+     class="side-menu">
+
+
+    <h5>
+        メニュー
+    </h5>
+
+
+    <!-- =====================================
+         一般メニュー
+    ====================================== -->
+
+
+    <!-- 管理薬品一覧 -->
+
+    <a class="btn w-100"
+       href="/citiran">
+
+        管理薬品一覧
+
+    </a>
+
+
+    <!-- 使用記録一覧 -->
+
+    <a class="btn w-100"
+       href="/siyoulog">
+
+        使用記録一覧
+
+    </a>
+
+
+    <!-- 実習室一覧 -->
+
+    <a class="btn w-100"
+       href="/ptr_itiran">
+
+        実習室一覧
+
+    </a>
+
+
+    <!-- マイページ -->
+
+    <a class="btn w-100"
+       href="/mypage">
+
+        マイページ
+
+    </a>
+
+
+
+    <hr>
+
+
+    <!-- =====================================
+         管理者専用
+    ====================================== -->
+
+    <h5>
+        管理者専用
+    </h5>
+
+
+    <!-- 管理者ページ -->
+
+    <a class="btn w-100"
+       href="/admin">
+
+        管理者ページ
+
+    </a>
+
+
+    <!-- 使用記録登録 -->
+
+    <a class="btn w-100"
+       href="/home">
+
+        使用記録登録
+
+    </a>
+
+
+    <!-- 新規薬品登録 -->
+
+    <a class="btn w-100"
+       href="/admin/chemical/new">
+
+        新規薬品登録
+
+    </a>
+
+
+    <!-- 利用ユーザ一覧 -->
+
+    <a class="btn user-button"
+       href="/user">
+
+        利用ユーザ一覧
+
+    </a>
+
+
+    <!-- QRコード作成 -->
+
+    <a class="btn qr-create-button"
+       href="/admin/qr-read">
+
+        QRコード作成
+
+    </a>
+
+
+    <!-- QRコード再発行 -->
+
+    <a class="btn qr-reissue-button"
+       href="/admin/qr-reissue">
+
+        QRコード再発行
+
+    </a>
+
+
+    <!-- 使用記録一覧 -->
+
+    <a class="btn record-list-button"
+       href="/siyoulog">
+
+        使用記録一覧
+
+    </a>
+
+
+    <!-- 容量・在庫一覧 -->
+
+    <a class="btn stock-button"
+       href="/capa">
+
+        容量・在庫一覧
+
+    </a>
+
+
+    <!-- 薬品瓶抹消 -->
+
+    <a class="btn delete-button"
+       href="/cdelete">
+
+        薬品瓶抹消
+
+    </a>
+
+
+    <!-- 管理ユーザ申請一覧 -->
+
+    <a class="btn w-100"
+       href="/admin/teach">
+
+        管理ユーザ申請一覧
+
+    </a>
+
+
+    <!-- ホームに戻る -->
+
+    <a class="btn w-100"
+       href="/home">
+
+        ホームに戻る
+
+    </a>
+
+
+</div>
+
+
+
+<!-- =========================================
+     JavaScript
+========================================= -->
+
+<script>
+
+    function toggleMenu() {
+
+        const main =
+            document.getElementById("maingamen");
+
+        const menu =
+            document.getElementById("sideMenu");
+
+        main.classList.toggle("menu-open");
+
+        menu.classList.toggle("open");
+
+    }
+
+</script>
+
+
+</body>
+</html>
