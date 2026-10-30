@@ -8,7 +8,7 @@ class AppMenu extends HTMLElement {
                         <span class="menu-title">メニュー</span>
                     </div>
                 <div class="side-menu-body">
-                    <button class="btn btn-primary" onclick="location.href='itiran.html'">
+                    <button class="btn btn-primary" onclick="location.href='Citirantable.html'">
                         管理薬品一覧
                     </button>
                     <button class="btn btn-success" onclick="location.href='tamesitamesi.html'">
